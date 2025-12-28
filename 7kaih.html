@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jurnal Karakter - Final</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+    <style>
+        /* --- CSS VARIABLES --- */
+        :root {
+            --bg-color: #1e272e;
+            --card-bg: #2d3436;
+            --text-primary: #dfe6e9;
+            --item-bg: #353b48;
+            --locked: #636e72;
+            --modal-overlay: rgba(0, 0, 0, 0.85);
+            --accent: #00cec9;
+            --danger: #d63031;
+            --warning: #fdcb6e;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            margin: 0; padding: 20px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            min-height: 100vh;
+        }
+
+        /* Container Umum - SUPER RAMPING */
+        .container {
+            width: 100%;
+            max-width: 320px;
+            background: var(--card-bg);
+            border-radius: 24px;
+            padding: 20px 10px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+            display: none;
+            animation: fadeIn 0.5s ease-out;
+            box-sizing: border-box;
+        }
+
+        .container.guru-mode { max-width: 98% !important; padding: 20px; } 
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* HEADER LOGIN */
+        .login-header-icon {
+            font-size: 4rem;
+            text-align: center;
+            display: block;
+            margin-bottom: -5px;
+            animation: waveHand 2s infinite ease-in-out;
+            transform-origin: 70% 70%;
+        }
+        
+        @keyframes waveHand { 
+            0% { transform: rotate(0deg); } 
+            50% { transform: rotate(15deg); } 
+            100% { transform: rotate(0deg); } 
+        }
+
+        h2 { text-align: center; margin-top: 0; margin-bottom: 20px; font-size: 1.4rem; }
+        h3 { text-align: center; margin-top: 0; margin-bottom: 20px; }
+        
+        .role-container { display: flex; gap: 15px; justify-content: center; margin-top: 20px; }
+        
+        /* --- TOMBOL ROLE --- */
+        .role-card {
+            width: 130px; height: 130px; 
+            border: none; border-radius: 20px;
+            cursor: pointer; display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            transition: transform 0.2s; color: white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            flex: none; 
+        }
+        .role-card:hover { transform: scale(1.05); }
+        .role-siswa { background: linear-gradient(135deg, #00b894, #00cec9); }
+        .role-guru { background: linear-gradient(135deg, #0984e3, #6c5ce7); }
+        
+        .role-icon { font-size: 2.5rem; margin-bottom: 8px; } 
+        .role-title { font-size: 0.95rem; font-weight: bold; }
+
+        /* Form Input */
+        .input-group { margin-bottom: 15px; }
+        .input-label { font-size: 0.85rem; color: #b2bec3; margin-bottom: 5px; display: block; margin-left: 5px; }
+
+        .input-box {
+            width: 100%; padding: 12px;
+            background: var(--item-bg); border: 2px solid var(--item-bg); color: white;
+            border-radius: 10px; box-sizing: border-box; text-align: center;
+            font-size: 1rem;
+        }
+        .input-box:focus { border-color: #0984e3; outline: none; }
+        .wali-box { background: #2d3436; border: 1px solid #00cec9; color: #00cec9; font-weight: bold; transition: 0.3s; }
+        select.input-box {
+            cursor: pointer; appearance: none;
+            background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23dfe6e9%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+            background-repeat: no-repeat; background-position: right 15px top 50%; background-size: 12px auto;
+        }
+        .input-box:disabled { background-color: var(--locked); color: #b2bec3; cursor: not-allowed; }
+
+        /* Habit List */
+        #habitList { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+        .habit-item { 
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            background: var(--item-bg); padding: 15px; border-radius: 16px; text-align: center; gap: 10px;
+            border: 2px solid var(--theme-color); transition: 0.3s; cursor: pointer;
+        }
+        .habit-item.disabled-state { opacity: 0.4; filter: grayscale(1); cursor: not-allowed; border-color: #636e72; }
+        .habit-item.done-state { background-color: var(--theme-bg); box-shadow: 0 0 15px var(--theme-color); border-color: transparent; }
+        .habit-item.locked-state { opacity: 0.8; pointer-events: none; }
+        .habit-item.hidden-habit { display: none !important; }
+        .habit-text { font-weight: bold; font-size: 0.95rem; color: var(--theme-color); transition: 0.3s;}
+        .time-badge { 
+            min-width: 60px; height: 30px; border-radius: 15px; border: 2px solid var(--theme-color); 
+            background: transparent; color: var(--theme-color); font-size: 0.9rem; font-weight: bold; 
+            font-family: 'Courier New', monospace; display: flex; align-items: center; justify-content: center; 
+            transition: 0.3s; padding: 0 10px;
+        }
+        .time-badge.active { background: var(--theme-color); color: #1e272e; box-shadow: 0 0 10px rgba(0,0,0,0.3); }
+        .action-btn { width: 100%; padding: 12px; margin-top: 10px; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; color: white; font-size: 1rem; transition: 0.3s; }
+        .action-btn:disabled { background-color: var(--locked) !important; cursor: not-allowed; }
+        .btn-back { background: transparent; color: var(--text-secondary); border: 1px solid var(--text-secondary); margin-bottom: 10px; padding: 5px 15px; border-radius: 20px; cursor: pointer;}
+        #statusMessage { text-align: center; font-weight: bold; margin-bottom: 10px; padding: 10px; border-radius: 8px; display: none; }
+
+        /* MODAL CUSTOM SHOLAT */
+        #modalSholat { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--modal-overlay); z-index: 1000; display: none; align-items: center; justify-content: center; }
+        .modal-content { background: var(--card-bg); width: 90%; max-width: 350px; padding: 20px; border-radius: 20px; text-align: center; animation: popUp 0.3s ease-out; border: 2px solid #00cec9; box-shadow: 0 0 30px rgba(0, 206, 201, 0.3); }
+        @keyframes popUp { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .sholat-grid { display: flex; flex-direction: column; gap: 10px; margin: 20px 0; }
+        .btn-sholat-sub { padding: 12px; background: var(--item-bg); border: 1px solid #00cec9; color: white; border-radius: 10px; font-size: 1rem; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: 0.2s; position: relative; overflow: hidden; }
+        .btn-sholat-sub.done { background: #00cec9; color: #2d3436; font-weight: bold; cursor: not-allowed; }
+        .btn-sholat-sub.too-early { background: var(--item-bg); border-color: #636e72; opacity: 0.6; cursor: not-allowed; color: #b2bec3; }
+        .btn-sholat-sub.too-late { background: #2d3436; border-color: var(--danger); opacity: 0.7; cursor: not-allowed; color: var(--danger); }
+        .close-modal { background: #d63031; color: white; border: none; padding: 8px 20px; border-radius: 20px; cursor: pointer; font-weight: bold; }
+        
+        /* CSS AREA PRINT */
+        #areaPrint { background-color: white; color: black; padding: 20px; border-radius: 8px; font-family: 'Times New Roman', Times, serif; }
+        #areaPrint h3 { color: black !important; text-transform: uppercase; margin-bottom: 5px; font-size: 2rem; }
+        #areaPrint p { color: #333 !important; font-size: 1rem; }
+        #areaPrint .table-responsive { border: none; overflow: visible; }
+        #areaPrint table { width: 100%; border-collapse: collapse; font-size: 1.1rem; color: black; }
+        #areaPrint th, #areaPrint td { padding: 8px 5px; text-align: center; border: 1px solid black !important; background-color: transparent !important; color: black !important; vertical-align: middle; }
+        #areaPrint th { background-color: white !important; font-weight: bold; font-size: 1.15rem; position: sticky; top: 0; }
+        #areaPrint td:first-child, #areaPrint th:first-child { background-color: white !important; position: sticky; left: 0; border-right: 2px solid black !important; font-size: 1.1rem; }
+        #areaPrint .check-ok { color: black !important; font-weight: bold; font-size: 1.4rem; } 
+        #areaPrint .check-no { color: #ccc !important; font-size: 1.2rem; } 
+        #areaPrint .time-small { color: #555 !important; font-size: 0.95rem; font-weight: normal; margin-top: 2px; }
+        #areaPrint .sholat-text-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px 5px; text-align: left; font-size: 0.85rem; line-height: 1.3; width: 100%; }
+        #areaPrint .sholat-item { white-space: nowrap; }
+        #areaPrint .sholat-item.filled { color: black; font-weight: bold; }
+        #areaPrint .sholat-item.empty { color: #7f8c8d; font-weight: normal; } 
+        #areaPrint .icon-ok { color: #00b894; font-weight: bold; font-family: sans-serif; margin-right: 2px;} 
+        #areaPrint .icon-no { color: #d63031; font-weight: bold; font-family: sans-serif; margin-right: 2px;}
+
+        .guru-actions { display: flex; gap: 10px; align-items: center; }
+        .btn-download { background: #0984e3; border: none; color: white; padding: 6px 15px; border-radius: 15px; cursor: pointer; font-weight: bold; display: flex; align-items: center; gap: 5px; }
+        .btn-download:hover { background: #74b9ff; }
+        .btn-reset { background:#d63031; border:none; color:white; padding:6px 15px; border-radius:15px; cursor:pointer; font-weight: bold; }
+
+        div:where(.swal2-container) div:where(.swal2-popup) { background: #2d3436 !important; color: #dfe6e9 !important; border-radius: 20px !important; border: 1px solid #4b6584; box-shadow: 0 10px 40px rgba(0,0,0,0.8) !important; }
+        div:where(.swal2-icon) { border-color: var(--accent) !important; color: var(--accent) !important; }
+        div:where(.swal2-confirm) { background-color: #00b894 !important; box-shadow: none !important; }
+        div:where(.swal2-deny) { background-color: #d63031 !important; }
+
+        .swal2-input { text-align: center !important; }
+    </style>
+</head>
+<body>
+
+    <div id="page-login" class="container" style="display: block;">
+        <div class="login-header-icon">👋</div>
+        <h2>Selamat Datang di Jurnal 7 KAIH</h2>
+        
+        <div class="role-container">
+            <button class="role-card role-siswa" onclick="bukaHalaman('page-siswa')">
+                <div class="role-icon">📚</div>
+                <div class="role-title">SISWA</div>
+            </button>
+            
+            <button class="role-card role-guru" onclick="cekLoginGuru()">
+                <div class="role-icon">👨‍🏫</div>
+                <div class="role-title">GURU</div>
+            </button>
+        </div>
+    </div>
+
+    <div id="page-siswa" class="container">
+        <button class="btn-back" onclick="bukaHalaman('page-login')">⬅ Kembali</button>
+        <h3>Jurnal Harian</h3>
+        
+        <div id="statusMessage"></div>
+
+        <div class="input-group">
+            <label class="input-label">Nama Guru Wali</label>
+            <input type="text" id="displayWaliKelas" class="input-box wali-box" placeholder="-" disabled>
+        </div>
+
+        <div class="input-group">
+            <label class="input-label">Pilih Kelas</label>
+            <select id="inputKelas" class="input-box" onchange="loadDaftarNama()">
+                <option value="">-- Pilih Kelas --</option>
+            </select>
+        </div>
+
+        <div class="input-group" style="margin-bottom: 30px;">
+            <label class="input-label">Nama Murid</label>
+            <div id="containerNama">
+                <input type="text" class="input-box" placeholder="Pilih Kelas dulu..." disabled>
+            </div>
+        </div>
+        
+        <div id="habitList"></div>
+
+        <textarea id="inputRefleksi" class="input-box" rows="2" placeholder="Tulis keterangan/catatan..." style="text-align: left;"></textarea>
+        
+        <button id="btnSubmit" class="action-btn" style="background: #00b894;" onclick="simpanDataSiswa()">💾 Kirim Laporan</button>
+    </div>
+
+    <div id="modalSholat">
+        <div class="modal-content">
+            <h3 style="color: #00cec9; margin-bottom:5px;">🕌 Sholat 5 Waktu</h3>
+            <p style="font-size: 0.9rem; color:#b2bec3;">Validasi waktu sesuai jam sholat.</p>
+            <div class="sholat-grid">
+                <button id="sholat-Subuh" class="btn-sholat-sub" onclick="klikSubSholat('Subuh')">
+                    <span>Subuh</span> <span class="sub-time">-</span>
+                </button>
+                <button id="sholat-Dzuhur" class="btn-sholat-sub" onclick="klikSubSholat('Dzuhur')">
+                    <span>Dzuhur</span> <span class="sub-time">-</span>
+                </button>
+                <button id="sholat-Ashar" class="btn-sholat-sub" onclick="klikSubSholat('Ashar')">
+                    <span>Ashar</span> <span class="sub-time">-</span>
+                </button>
+                <button id="sholat-Maghrib" class="btn-sholat-sub" onclick="klikSubSholat('Maghrib')">
+                    <span>Maghrib</span> <span class="sub-time">-</span>
+                </button>
+                <button id="sholat-Isya" class="btn-sholat-sub" onclick="klikSubSholat('Isya')">
+                    <span>Isya</span> <span class="sub-time">-</span>
+                </button>
+            </div>
+            <button class="close-modal" onclick="tutupModal()">Tutup / Simpan Sementara</button>
+        </div>
+    </div>
+
+    <div id="page-guru" class="container">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom:15px;">
+            <button class="btn-back" onclick="bukaHalaman('page-login')">⬅ Logout</button>
+            
+            <div class="guru-actions">
+                <button class="btn-download" onclick="simpanPDF()">📄 Save PDF</button>
+                <button class="btn-reset" onclick="hapusSemuaData()">🗑️ Reset</button>
+            </div>
+        </div>
+        
+        <div id="areaPrint">
+            <h3>SMPN 110 JAKARTA</h3>
+            <p style="text-align:center; margin-top:-5px; font-weight:bold; font-size:1.2rem;">LAPORAN JURNAL 7 KAIH</p>
+            
+            <div class="table-responsive">
+                <div id="tabelDataContainer"></div>
+            </div>
+        </div>
+    </div>
+
+<script>
+    const DB_KEY = 'jurnal_sekolah_db_fix';
+    let isLocked = false; 
+
+    function cekLoginGuru() {
+        Swal.fire({
+            title: '🔒 Akses Guru',
+            input: 'password',
+            inputAttributes: { autocapitalize: 'off', placeholder: 'Kata Sandi...' },
+            showCancelButton: true,
+            confirmButtonText: 'Masuk',
+            confirmButtonColor: '#0984e3',
+            cancelButtonText: 'Batal',
+            cancelButtonColor: '#d63031',
+            preConfirm: (password) => {
+                if (password !== "guru123") {
+                    Swal.showValidationMessage('Password Salah!');
+                }
+                return true;
+            },
+            allowOutsideClick: () => !Swal.isLoading()
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire({ icon: 'success', title: 'Login Berhasil', timer: 1000, showConfirmButton: false });
+                bukaHalaman('page-guru');
+            }
+        });
+    }
+
+    const defaultWaliKelas = {
+        "7A": "Bpk. H. Sunardi, M.Pd.",
+        "7B": "Bpk. Joko Santoso, M.Pd", // Wali Default 7B
+        "7C": "Ibu Rina Melati",
+    };
+
+    const PRAYER_SCHEDULE = {
+        Subuh:   { start: "04:00", end: "06:00" },
+        Dzuhur:  { start: "11:30", end: "15:00" },
+        Ashar:   { start: "15:00", end: "18:00" },
+        Maghrib: { start: "18:00", end: "19:00" },
+        Isya:    { start: "19:00", end: "23:59" } 
+    };
+
+    function showWarning(msg) { Swal.fire({ icon: 'warning', title: 'Perhatian', text: msg, confirmButtonText: 'Oke' }); }
+    function showSuccess(msg) { Swal.fire({ icon: 'success', title: 'Berhasil', text: msg, timer: 2000, showConfirmButton: false }); }
+    function showError(msg) { Swal.fire({ icon: 'error', title: 'Gagal', text: msg }); }
+
+    const habitsData = [
+        { icon: "🌅", text: "Bangun", color: "#fdcb6e", bg: "rgba(253, 203, 110, 0.2)" },
+        { icon: "🙏", text: "Ibadah",   color: "#a29bfe", bg: "rgba(162, 155, 254, 0.2)" },
+        { icon: "🕌", text: "Sholat 5W", color: "#00cec9", bg: "rgba(0, 206, 201, 0.2)", isSpecial: true },
+        { icon: "⚽", text: "Olahraga", color: "#ff7675", bg: "rgba(255, 118, 117, 0.2)" },
+        { icon: "🥗", text: "Makan", color: "#55efc4", bg: "rgba(85, 239, 196, 0.2)" },
+        { icon: "📚", text: "Belajar",color: "#74b9ff",bg: "rgba(116, 185, 255, 0.2)" },
+        { icon: "🤝", text: "Sosial",color: "#fd79a8",bg: "rgba(253, 121, 168, 0.2)" },
+        { icon: "😴", text: "Tidur", color: "#81ecec", bg: "rgba(129, 236, 236, 0.2)" }
+    ];
+
+    let tempSholatData = { Subuh: null, Dzuhur: null, Ashar: null, Maghrib: null, Isya: null };
+
+    // --- DATA SISWA PER KELAS ---
+    const dataSiswaPerKelas = {
+        "7A": [
+            // SISA KELAS 7A (Abdul Fatah s.d. Zahfa)
+            "Abdul Fatah Nasution", "Abdurrahman Alfarizi", "Adda Kaayuan Aulia Cakra Nirmala", 
+            "Ahmad Fachri Firmansyah", "Ainnur Fadzillah", "Aishavira Salsabila", "Ardhyastha Prasetya", 
+            "Azka Ibrahim", "Carissa Alya Ferica", "Charissa Aglessia Putri", "Dimas Putra Setiawan", 
+            "Emira Khairunisa", "Fitri Yaumi", "Gagah Adhi Prakoso", "Janetha Putri Adellia", 
+            "Kahla Ghaisa Shiba", "Kimiko Azura Yusell", "Lolita Aurora Hadi", "Mahira Handayani", 
+            "Muhamad Rizki", "Muhammad Alim Raafi", "Muhammad Erlangga Syaqib", "Muhammad Fadhil Arsyad",
+            "Muhammad Fareez Pratama", "Muhammad Nizam", "Nalendra Zaki Mubarak", "Naysyilla Innayah", 
+            "Pricellia Fauziah", "Randhika Rezky Wahyudi", "Sabian Fataya Adam Nugraha", 
+            "Satria Cahya Anggara", "Tania Putri Christvie", "Tri Yusuf Jamal Ludin", "Usamah", 
+            "Zahfa Syachqilia"
+        ],
+        "7B": [
+            // GROUP A: Pindahan 7A -> Wali: Pak Asril
+            "Athaya Khansa Batubara", "Azri Sani Athallah", "Bima Ramadaska Nurzafran", 
+            "Fakhirah Salwa Nabila Hakim", "Hanyya Mirfa Fadli", "Humairah Aulia Ramadhani Hilmi", 
+            "Irfan Prasetya", "Jibran Nararya Putra", "Kanzania Zievara Akhmad", 
+            "Kayla Mantika Hermansyah", "Khalifah Ramadhany",
+
+            // GROUP B: Baru Input -> Wali: Ibu Suningsih
+            "Michael Rahman Manoppo", "Mikayla Al Rasyid Febriana", "Muhamad Latif Albany Pasaribu",
+            "Muhamad Rizky Alfadillah", "Muhammad Azzam Raziq", "Muhammad Daffa Alfarizki",
+            "Muhammad Syailendra Ibrahim", "Nadia Alanna Irawan", "Napsah Djunaidi",
+            "Nova Zara Pramudita", "Noval Ahmad Dhani", "Rahmania Azzahra",
+            "Revalina Almaiza Fadillah", "Ridho Abiyu Kafi", "Rifki Nuril Huda",
+            "Rifqi Azzam Saputra", "Rizky Nursyawali", "Salsa Aprilia Putri",
+            "Syafa Haliza Putri", "Syafia Nayla Zahra", "Vikryzaky Ariza",
+            "Yake Fain Seto", "Zaky Alfaridzi Ahmad"
+        ]
+    };
+
+    const kelasSelect = document.getElementById('inputKelas');
+    ['7', '8', '9'].forEach(lvl => {
+        ['A', 'B', 'C', 'D', 'E', 'F'].forEach(ltr => {
+            let o = document.createElement('option');
+            o.value = `${lvl}${ltr}`; o.textContent = `Kelas ${lvl}${ltr}`;
+            kelasSelect.appendChild(o);
+        });
+    });
+
+    function loadDaftarNama() {
+        const kls = document.getElementById('inputKelas').value;
+        const cont = document.getElementById('containerNama');
+        const waliDisplay = document.getElementById('displayWaliKelas');
+        
+        resetFormUI(); 
+        setHabitDisabled(true); 
+        waliDisplay.value = "Pilih Nama Siswa...";
+
+        if (kls === "") {
+            cont.innerHTML = `<input type="text" class="input-box" placeholder="Pilih Kelas dulu..." disabled>`;
+            waliDisplay.value = "-";
+        } else if (dataSiswaPerKelas[kls]) {
+            let h = `<select id="inputNama" class="input-box" onchange="cekStatusLaporan()"><option value="">-- Pilih Namamu --</option>`;
+            dataSiswaPerKelas[kls].forEach(n => h += `<option value="${n}">${n}</option>`);
+            cont.innerHTML = h + `</select>`;
+        } else {
+            cont.innerHTML = `<input type="text" id="inputNama" class="input-box" placeholder="Nama manual..." onblur="cekStatusLaporan()">`;
+            waliDisplay.value = defaultWaliKelas[kls] || "Guru Wali Belum Diinput";
+        }
+    }
+
+    // --- LOGIKA WALI KELAS DINAMIS (UPDATED 3 KELOMPOK) ---
+    function updateWaliKelasDinamis(kelas, nama) {
+        const field = document.getElementById('displayWaliKelas');
+        let guru = defaultWaliKelas[kelas] || "Belum Ada Data";
+
+        // 1. DAFTAR SISWA IBU SUNINGSIH (Khusus Kelas 7B Group B)
+        const siswaBuSuningsih = [
+            "Michael Rahman Manoppo", "Mikayla Al Rasyid Febriana", "Muhamad Latif Albany Pasaribu",
+            "Muhamad Rizky Alfadillah", "Muhammad Azzam Raziq", "Muhammad Daffa Alfarizki",
+            "Muhammad Syailendra Ibrahim", "Nadia Alanna Irawan", "Napsah Djunaidi",
+            "Nova Zara Pramudita", "Noval Ahmad Dhani", "Rahmania Azzahra",
+            "Revalina Almaiza Fadillah", "Ridho Abiyu Kafi", "Rifki Nuril Huda",
+            "Rifqi Azzam Saputra", "Rizky Nursyawali", "Salsa Aprilia Putri",
+            "Syafa Haliza Putri", "Syafia Nayla Zahra", "Vikryzaky Ariza",
+            "Yake Fain Seto", "Zaky Alfaridzi Ahmad"
+        ];
+
+        // 2. DAFTAR SISWA PAK ASRIL (Gabungan 7A & 7B Group A)
+        const siswaPakAsril = [
+            // Dari Kelas 7A
+            "Muhammad Fareez Pratama", "Muhammad Nizam", "Nalendra Zaki Mubarak", 
+            "Naysyilla Innayah", "Pricellia Fauziah", "Randhika Rezky Wahyudi", 
+            "Sabian Fataya Adam Nugraha", "Satria Cahya Anggara", "Tania Putri Christvie", 
+            "Tri Yusuf Jamal Ludin", "Usamah", "Zahfa Syachqilia",
+            
+            // Dari Kelas 7B
+            "Athaya Khansa Batubara", "Azri Sani Athallah", "Bima Ramadaska Nurzafran", 
+            "Fakhirah Salwa Nabila Hakim", "Hanyya Mirfa Fadli", "Humairah Aulia Ramadhani Hilmi", 
+            "Irfan Prasetya", "Jibran Nararya Putra", "Kanzania Zievara Akhmad", 
+            "Kayla Mantika Hermansyah", "Khalifah Ramadhany"
+        ];
+
+        // --- CEK LOGIKA ---
+        if (siswaBuSuningsih.includes(nama)) {
+            guru = "Suningsih, S.Pd.";
+        } else if (siswaPakAsril.includes(nama)) {
+            guru = "Bpk. Asril Yansah, S.Pd";
+        } 
+        
+        field.value = guru;
+    }
+
+    function cekStatusLaporan() {
+        const kelas = document.getElementById('inputKelas').value;
+        const namaEl = document.getElementById('inputNama');
+        const nama = namaEl ? namaEl.value : "";
+        
+        updateWaliKelasDinamis(kelas, nama);
+
+        const msgBox = document.getElementById('statusMessage');
+        const btnSubmit = document.getElementById('btnSubmit');
+
+        if(!nama || !kelas || nama === "") { setHabitDisabled(true); return; }
+
+        const today = new Date().toLocaleDateString('id-ID');
+        const db = JSON.parse(localStorage.getItem(DB_KEY) || "[]");
+        const riwayat = db.find(d => d.kelas === kelas && d.nama === nama && d.tanggal === today);
+
+        resetFormUI(); 
+        updateWaliKelasDinamis(kelas, nama);
+
+        if (riwayat) {
+            isLocked = true;
+            setHabitDisabled(false); 
+            msgBox.style.display = 'block';
+            msgBox.style.backgroundColor = 'rgba(214, 48, 49, 0.2)';
+            msgBox.style.color = '#ff7675';
+            msgBox.innerHTML = `⚠️ Hai ${nama}, laporan hari ini sudah dikirim!`;
+            btnSubmit.disabled = true;
+            btnSubmit.innerText = "🔒 Terkunci";
+            document.getElementById('inputRefleksi').value = riwayat.refleksi || "";
+            document.getElementById('inputRefleksi').disabled = true;
+
+            riwayat.detail.forEach((val, index) => {
+                const card = document.getElementById(`card-${index}`);
+                const badge = document.getElementById(`badge-${index}`);
+                
+                if (index === 2 && typeof val === 'object' && val !== null) {
+                    tempSholatData = val; 
+                    updateTampilanUtamaSholat();
+                    card.classList.add('locked-state'); 
+                } 
+                else {
+                    card.classList.add('locked-state'); 
+                    if (val) {
+                        badge.classList.add('active');
+                        badge.innerText = val;
+                        card.classList.add('done-state');
+                    } else {
+                        badge.innerText = "-";
+                    }
+                }
+            });
+            cekKonflikIbadah();
+        } else {
+            isLocked = false;
+            setHabitDisabled(false); 
+            msgBox.style.display = 'none';
+        }
+    }
+
+    function setHabitDisabled(isDisabled) {
+        habitsData.forEach((_, i) => {
+            const card = document.getElementById(`card-${i}`);
+            if (isDisabled) {
+                card.classList.add('disabled-state');
+            } else {
+                card.classList.remove('disabled-state');
+            }
+        });
+    }
+
+    function resetFormUI() {
+        isLocked = false;
+        tempSholatData = { Subuh: null, Dzuhur: null, Ashar: null, Maghrib: null, Isya: null };
+        document.getElementById('statusMessage').style.display = 'none';
+        document.getElementById('inputRefleksi').value = "";
+        document.getElementById('inputRefleksi').disabled = false;
+        document.getElementById('btnSubmit').disabled = false;
+        document.getElementById('btnSubmit').innerText = "💾 Kirim Laporan";
+
+        habitsData.forEach((_, i) => {
+            const card = document.getElementById(`card-${i}`);
+            const badge = document.getElementById(`badge-${i}`);
+            badge.classList.remove('active');
+            badge.innerText = ""; 
+            card.classList.remove('done-state');
+            card.classList.remove('locked-state');
+            card.classList.add('disabled-state'); 
+            card.classList.remove('hidden-habit'); 
+        });
+    }
+
+    const habitContainer = document.getElementById('habitList');
+    habitsData.forEach((h, index) => {
+        habitContainer.innerHTML += `
+            <div class="habit-item disabled-state" id="card-${index}" 
+                 style="--theme-color: ${h.color}; --theme-bg: ${h.bg}" 
+                 onclick="klikCard(${index})">
+                <span class="habit-text">${h.icon} ${h.text}</span>
+                <div id="badge-${index}" class="time-badge"></div>
+            </div>`;
+    });
+
+    function klikCard(index) {
+        const kelas = document.getElementById('inputKelas').value;
+        const nama = document.getElementById('inputNama') ? document.getElementById('inputNama').value : "";
+
+        if (!kelas || !nama) { showWarning("Pilih KELAS dan NAMA dulu!"); return; }
+        if (isLocked) { showWarning("Data sudah dikirim."); return; }
+
+        if (habitsData[index].isSpecial) {
+            bukaModalSholat();
+            return;
+        }
+
+        const badge = document.getElementById(`badge-${index}`);
+        const card = document.getElementById(`card-${index}`);
+        
+        if (badge.classList.contains('active')) { showWarning("Waktu sudah tercatat!"); return; }
+
+        badge.classList.add('active');
+        const now = new Date();
+        const timeString = now.toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit', hour12: false}).replace('.', ':');
+        badge.innerText = timeString;
+        card.classList.add('done-state');
+        
+        if (index === 1) { cekKonflikIbadah(); }
+    }
+
+    function cekKonflikIbadah() {
+        const cardIbadah = document.getElementById('card-1'); 
+        const cardSholat = document.getElementById('card-2'); 
+        const badgeIbadah = document.getElementById('badge-1');
+        
+        const isIbadahDone = badgeIbadah.classList.contains('active');
+        const isSholatDone = Object.values(tempSholatData).filter(v => v !== null).length > 0;
+
+        if (isIbadahDone) {
+            cardSholat.classList.add('hidden-habit'); 
+            cardIbadah.classList.remove('hidden-habit');
+        } 
+        else if (isSholatDone) {
+            cardIbadah.classList.add('hidden-habit'); 
+            cardSholat.classList.remove('hidden-habit');
+        } 
+        else {
+            cardIbadah.classList.remove('hidden-habit'); 
+            cardSholat.classList.remove('hidden-habit');
+        }
+    }
+
+    function bukaModalSholat() { document.getElementById('modalSholat').style.display = 'flex'; renderIsiModal(); }
+    function tutupModal() { document.getElementById('modalSholat').style.display = 'none'; updateTampilanUtamaSholat(); cekKonflikIbadah(); }
+
+    function getTimeInMinutes(timeStr) {
+        if(!timeStr) return 0;
+        const [h, m] = timeStr.split(':').map(Number);
+        return h * 60 + m;
+    }
+
+    function checkPrayerStatus(prayerName) {
+        const now = new Date();
+        const nowStr = now.toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit', hour12: false}).replace('.', ':');
+        const nowMinutes = getTimeInMinutes(nowStr);
+        const schedule = PRAYER_SCHEDULE[prayerName];
+        if(!schedule) return "open"; 
+        const startMinutes = getTimeInMinutes(schedule.start);
+        const endMinutes = getTimeInMinutes(schedule.end);
+        if (nowMinutes < startMinutes) return "too_early";
+        if (nowMinutes > endMinutes) return "too_late";
+        return "open";
+    }
+
+    function renderIsiModal() {
+        const sholats = ['Subuh', 'Dzuhur', 'Ashar', 'Maghrib', 'Isya'];
+        sholats.forEach(s => {
+            const btn = document.getElementById(`sholat-${s}`);
+            const spanTime = btn.querySelector('.sub-time');
+            btn.classList.remove('done', 'too-early', 'too-late');
+            
+            if (tempSholatData[s]) {
+                btn.classList.add('done');
+                spanTime.innerText = tempSholatData[s];
+            } else {
+                const status = checkPrayerStatus(s);
+                if (status === 'too_early') { btn.classList.add('too-early'); spanTime.innerText = "Belum Masuk"; }
+                else if (status === 'too_late') { btn.classList.add('too-late'); spanTime.innerText = "Terlewat"; }
+                else { spanTime.innerText = "Isi Sekarang"; }
+            }
+        });
+    }
+
+    function klikSubSholat(waktu) {
+        if (tempSholatData[waktu]) { showWarning(`Sholat ${waktu} sudah tercatat.`); return; }
+        const status = checkPrayerStatus(waktu);
+        if (status === 'too_early') { showWarning(`Belum masuk waktu Sholat ${waktu}!`); return; }
+        if (status === 'too_late') { showError(`Waktu Sholat ${waktu} sudah terlewat!`); return; }
+        const now = new Date();
+        tempSholatData[waktu] = now.toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit', hour12: false}).replace('.', ':');
+        renderIsiModal();
+    }
+
+    function updateTampilanUtamaSholat() {
+        const dikerjakan = Object.values(tempSholatData).filter(v => v !== null).length;
+        const card = document.getElementById(`card-2`);
+        const badge = document.getElementById(`badge-2`);
+        if (dikerjakan > 0) {
+            badge.classList.add('active'); badge.innerText = `${dikerjakan}/5`; card.classList.add('done-state');
+        } else {
+            badge.classList.remove('active'); badge.innerText = ""; card.classList.remove('done-state');
+        }
+    }
+
+    function simpanDataSiswa() {
+        if(isLocked) return;
+        const kelas = document.getElementById('inputKelas').value;
+        const namaEl = document.getElementById('inputNama');
+        if(kelas === "" || !namaEl || namaEl.value === "") { showWarning("Lengkapi data Nama dan Kelas!"); return; }
+        
+        const nama = namaEl.value;
+        const wali = document.getElementById('displayWaliKelas').value;
+        const refleksi = document.getElementById('inputRefleksi').value;
+        const today = new Date().toLocaleDateString('id-ID');
+
+        let detail = [], skor = 0;
+        habitsData.forEach((h, i) => {
+            if (h.isSpecial) {
+                detail.push(tempSholatData); 
+                const countSholat = Object.values(tempSholatData).filter(v => v !== null).length;
+                if(countSholat > 0) skor++; 
+            } else {
+                const badge = document.getElementById(`badge-${i}`);
+                if(badge.classList.contains('active')) {
+                    detail.push(badge.innerText);
+                    skor++;
+                } else {
+                    detail.push(null);
+                }
+            }
+        });
+
+        const data = { 
+            id: Date.now(), tanggal: today, kelas, nama, wali, skor, detail, refleksi, 
+            waktu: new Date().toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'}) 
+        };
+
+        let db = JSON.parse(localStorage.getItem(DB_KEY) || "[]");
+        db.push(data);
+        localStorage.setItem(DB_KEY, JSON.stringify(db));
+        showSuccess(`Laporan ${nama} berhasil disimpan!`);
+        cekStatusLaporan(); 
+    }
+
+    function renderHalamanGuru() {
+        const container = document.getElementById('tabelDataContainer');
+        let db = JSON.parse(localStorage.getItem(DB_KEY) || "[]");
+        
+        db.sort((a,b) => {
+            if (a.tanggal !== b.tanggal) return new Date(b.tanggal) - new Date(a.tanggal);
+            return a.kelas === b.kelas ? a.nama.localeCompare(b.nama) : a.kelas.localeCompare(b.kelas);
+        });
+
+        if(db.length === 0) { container.innerHTML = "<p style='text-align:center;'>Belum ada data masuk.</p>"; return; }
+
+        let headerCols = "";
+        habitsData.forEach((h, index) => {
+            if (index === 2) return; 
+            if (index === 1) {
+                headerCols += `<th style="min-width:240px">Ibadah (Waktu Sholat)</th>`;
+            } else {
+                headerCols += `<th style="width:1%">${h.text}</th>`;
+            }
+        });
+
+        let html = `<table>
+            <thead>
+                <tr>
+                    <th style="width:35px; text-align:center;">No</th>
+                    <th style="min-width:160px;">Siswa</th>
+                    ${headerCols}
+                    <th style="min-width:120px;">Keterangan</th>
+                </tr>
+            </thead>
+            <tbody>`;
+
+        db.forEach((item, index) => {
+            let rowCols = "";
+            const sholatKeys = ['Subuh', 'Dzuhur', 'Ashar', 'Maghrib', 'Isya'];
+            
+            item.detail.forEach((val, i) => {
+                if (i === 2) return; 
+
+                if (i === 1) {
+                    const dataIbadah = item.detail[1];
+                    const dataSholat = item.detail[2];
+                    let isSholatFilled = false;
+                    if(dataSholat && typeof dataSholat === 'object') {
+                        if (Object.values(dataSholat).some(v => v !== null)) isSholatFilled = true;
+                    }
+
+                    if (isSholatFilled) {
+                        let textGrid = `<div class="sholat-text-grid">`;
+                        sholatKeys.forEach(key => {
+                            const time = dataSholat[key];
+                            if(time) {
+                                textGrid += `<div class="sholat-item filled"><span class="icon-ok">✔</span>${key}: ${time}</div>`;
+                            } else {
+                                textGrid += `<div class="sholat-item empty"><span class="icon-no">✖</span>${key}: -</div>`;
+                            }
+                        });
+                        textGrid += `</div>`;
+                        rowCols += `<td>${textGrid}</td>`;
+                    } 
+                    else if (dataIbadah) {
+                        rowCols += `<td><span class="check-ok">✔</span><span class="time-small">${dataIbadah}</span></td>`;
+                    } else {
+                        rowCols += `<td><span class="check-no">✖</span></td>`;
+                    }
+                } 
+                else {
+                    if(val) {
+                        rowCols += `<td><span class="check-ok">✔</span><span class="time-small">${val}</span></td>`;
+                    } else {
+                        rowCols += `<td><span class="check-no">✖</span></td>`;
+                    }
+                }
+            });
+
+            let shortRefleksi = item.refleksi ? item.refleksi.substring(0, 25) + (item.refleksi.length>25?"...":"") : "-";
+
+            html += `<tr>
+                <td style="text-align:center; font-weight:bold;">${index + 1}</td>
+                <td style="text-align:left;">
+                    <div style="font-weight:bold; color:black;">${item.nama}</div>
+                    <div style="font-size:0.95rem; color:#555;">${item.kelas} • ${item.tanggal}</div>
+                    <div style="font-size:0.8rem; color:#444; margin-top:2px;">Wali: ${item.wali}</div>
+                </td>
+                ${rowCols}
+                <td style="font-size:1rem; text-align:left;">${shortRefleksi}</td>
+            </tr>`;
+        });
+        container.innerHTML = html + "</tbody></table>";
+    }
+    
+    function simpanPDF() {
+        const element = document.getElementById('areaPrint');
+        if(document.getElementById('tabelDataContainer').innerText.includes("Belum ada data")) {
+            showWarning("Data masih kosong, tidak bisa download PDF.");
+            return;
+        }
+        const opt = { margin: 0.2, filename: 'Laporan-Jurnal-Karakter.pdf', image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2, useCORS: true }, jsPDF: { unit: 'in', format: 'legal', orientation: 'landscape' } };
+        Swal.fire({ title: 'Memproses PDF...', text: 'Mohon tunggu sebentar', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); } });
+        html2pdf().set(opt).from(element).save().then(() => { Swal.close(); showSuccess('PDF Berhasil Diunduh!'); });
+    }
+
+    function hapusSemuaData() {
+        Swal.fire({
+            title: 'Hapus Semua Data?', text: "Data tidak bisa kembali!", icon: 'warning',
+            showCancelButton: true, confirmButtonColor: '#d63031', cancelButtonColor: '#636e72',
+            confirmButtonText: 'Ya, Hapus!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                localStorage.removeItem(DB_KEY); renderHalamanGuru();
+                Swal.fire('Terhapus!', 'Data telah direset.', 'success');
+            }
+        });
+    }
+    
+    function bukaHalaman(id) {
+        document.querySelectorAll('.container').forEach(el => {
+            el.style.display = 'none';
+            el.classList.remove('guru-mode');
+        });
+        
+        const target = document.getElementById(id);
+        target.style.display = 'block';
+
+        if(id === 'page-guru') {
+            target.classList.add('guru-mode');
+            renderHalamanGuru();
+        }
+        if(id === 'page-siswa') {
+            document.getElementById('inputKelas').value = "";
+            loadDaftarNama();
+        }
+    }
+</script>
+
+</body>
+</html>
