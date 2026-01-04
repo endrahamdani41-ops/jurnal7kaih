@@ -7,84 +7,64 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800&display=swap" rel="stylesheet">
     <style>
-        :root { --bg: #0f172a; --card: #1e293b; --txt: #f8fafc; --acc: #22d3ee; --danger: #ef4444; --green: #10b981; --row-even: #1e293b; }
-        
-        body { 
-            font-family: 'Nunito', sans-serif; 
-            background: var(--bg); 
-            color: var(--txt); 
-            margin: 0; 
-            padding: 15px; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            /* --- PENYEMPURNAAN VERTIKAL --- */
-            justify-content: center; 
-            min-height: 100vh; 
-            box-sizing: border-box;
+        :root { 
+            --bg: #0f172a; --card: #1e293b; --txt: #f8fafc; --acc: #22d3ee; 
+            --danger: #ef4444; --green: #10b981; 
         }
 
-        /* --- ELEGANT ICON BUTTONS IN SWAL --- */
+        body { 
+            font-family: 'Nunito', sans-serif; background: var(--bg); color: var(--txt); 
+            margin: 0; padding: 15px; display: flex; flex-direction: column; 
+            align-items: center; justify-content: center; min-height: 100vh; box-sizing: border-box;
+        }
+
+        /* --- POPUP STYLE (ICON ONLY BUTTONS) --- */
         .premium-swal-popup {
             background: rgba(30, 41, 59, 0.98) !important;
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 35px !important;
-            padding: 20px !important;
         }
-        .premium-swal-title { color: var(--acc) !important; font-weight: 800 !important; }
         .premium-swal-input {
-            background: rgba(15, 23, 42, 0.6) !important;
-            border: 2px solid rgba(34, 211, 238, 0.2) !important;
-            border-radius: 18px !important;
-            color: white !important;
-            text-align: center !important;
-            height: 60px !important;
-            font-size: 1.3rem !important;
+            background: rgba(15, 23, 42, 0.6) !important; border: 2px solid rgba(34, 211, 238, 0.2) !important;
+            border-radius: 18px !important; color: white !important; text-align: center !important;
         }
-
-        /* Styling Tombol Icon Bulat */
         .swal2-actions { gap: 20px !important; margin-top: 25px !important; }
         .btn-swal-icon {
-            width: 60px !important;
-            height: 60px !important;
-            border-radius: 50% !important;
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            font-size: 1.5rem !important;
-            border: none !important;
-            cursor: pointer !important;
-            transition: 0.3s !important;
-            box-shadow: 0 8px 15px rgba(0,0,0,0.3) !important;
+            width: 60px !important; height: 60px !important; border-radius: 50% !important;
+            border: none !important; display: flex !important; align-items: center !important;
+            justify-content: center !important; font-size: 1.5rem !important; cursor: pointer !important;
+            transition: 0.3s !important; box-shadow: 0 8px 15px rgba(0,0,0,0.3) !important;
         }
         .btn-confirm { background: var(--green) !important; color: white !important; }
         .btn-cancel { background: var(--danger) !important; color: white !important; }
         .btn-swal-icon:hover { transform: scale(1.1); }
-        .btn-swal-icon:active { transform: scale(0.9); }
 
-        /* General UI */
-        .btn-icon { width: 48px; height: 48px; border-radius: 14px; border: none; color: white; font-size: 1.4rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.3s; background: rgba(255,255,255,0.05); }
+        /* --- CONTAINER JURNAL --- */
         .container { width: 100%; max-width: 420px; background: var(--card); border-radius: 28px; padding: 25px; display: none; box-sizing: border-box; box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
-        .container.guru-mode { max-width: 100% !important; width: 98vw; background: #0f172a; border: 1px solid #334155; }
-        .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; width: 100%; max-width: 400px; margin-top: 30px; }
-        .btn-square { aspect-ratio: 1/1; border-radius: 32px; border: none; color: white; font-weight: 800; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; transition: 0.3s; box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+        .container.guru-mode { max-width: 100% !important; width: 98vw; background: #0f172a; }
+        
+        .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; width: 100%; margin-top: 30px; }
+        .btn-square { aspect-ratio: 1/1; border-radius: 32px; border: none; color: white; font-weight: 800; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; transition: 0.3s; }
         .btn-square span { font-size: 3.5rem; }
+
         .input-box { width: 100%; padding: 16px; background: #1e293b; border: 2px solid #334155; color: #fff; border-radius: 16px; box-sizing: border-box; margin-bottom: 15px; text-align: center; font-size: 1rem; }
         
         #habitList { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 20px; }
         .habit-item { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 15px; border-radius: 24px; border: 3px solid var(--c); cursor: pointer; transition: 0.4s; background: transparent; opacity: 0.3; }
-        .habit-item.done { opacity: 1; background: var(--b); }
+        .habit-item.done { opacity: 1 !important; background: var(--b) !important; }
+
+        .sholat-popup-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 10px; }
+        .sholat-card { padding: 15px; border-radius: 20px; border: 2px solid var(--c); cursor: pointer; text-align: center; }
+
         .time-badge { margin-top: 5px; font-size: 0.85rem; background: rgba(0,0,0,0.5); padding: 3px 12px; border-radius: 10px; font-weight: 800; }
         .btn-save { background: var(--green); color: white; width: 100%; padding: 18px; border: none; border-radius: 18px; font-weight: 800; cursor: pointer; font-size: 1.1rem; }
         
-        /* TABLE STYLING */
+        /* MONITORING */
         .table-res { width: 100%; overflow-x: auto; margin-top: 20px; border-radius: 20px; border: 1px solid #334155; }
         table { width: 100%; border-collapse: collapse; min-width: 1400px; }
-        th { background: #1e293b; color: var(--acc); padding: 22px 10px; font-size: 0.8rem; text-transform: uppercase; border-bottom: 1px solid #334155; }
-        td { padding: 20px 10px; border-bottom: 1px solid #1e293b; text-align: center; color: #f1f5f9; font-weight: 700; font-size: 1.1rem; }
+        th { background: #1e293b; color: var(--acc); padding: 20px 10px; font-size: 0.8rem; text-transform: uppercase; }
+        td { padding: 15px 10px; border-bottom: 1px solid #1e293b; text-align: center; color: #f1f5f9; font-weight: 700; }
         tr:nth-child(even) { background-color: #161e2e; }
-        .ref-text { text-align: left !important; font-size: 0.95rem; font-weight: normal; color: #94a3b8; min-width: 280px; }
     </style>
 </head>
 <body>
@@ -92,7 +72,7 @@
     <div id="p-login" class="container" style="display: block; text-align: center;">
         <div style="font-size: 5rem; margin-bottom: 15px;">🏫</div>
         <h2 style="letter-spacing: -1px; margin-bottom: 5px;">JURNAL 7 KAIH</h2>
-        <p style="color: var(--acc); font-weight: 800; font-size: 0.9rem; margin-top: 0;">SMPN 110 JAKARTA</p>
+        <p style="color: var(--acc); font-weight: 800; margin-top: 0;">SMPN 110 JAKARTA</p>
         <div class="menu-grid">
             <button class="btn-square" style="background: var(--green);" onclick="move('p-siswa')"><span>👨‍🎓</span>SISWA</button>
             <button class="btn-square" style="background: #0ea5e9;" onclick="loginGuru()"><span>👨‍🏫</span>GURU</button>
@@ -100,34 +80,30 @@
     </div>
 
     <div id="p-siswa" class="container">
-        <div onclick="move('p-login')" style="cursor:pointer; margin-bottom: 25px; font-weight: 800; color: var(--acc);">⬅ KEMBALI</div>
+        <div onclick="move('p-login')" style="cursor:pointer; margin-bottom: 25px; color: var(--acc); font-weight: 800;">⬅ KEMBALI</div>
         <select id="i-kelas" class="input-box" onchange="loadNama()"><option value="">-- PILIH KELAS --</option></select>
         <div id="c-nama"><select class="input-box" disabled><option>PILIH KELAS DULU</option></select></div>
-        <input type="text" id="i-wali" class="input-box" readonly style="background:transparent; border:2px solid var(--acc); color:var(--acc); font-weight:800;" placeholder="WALI KELAS">
+        <input type="text" id="i-wali" class="input-box" readonly placeholder="WALI KELAS" style="background:transparent; border-color:var(--acc); color:var(--acc);">
         
-        <div id="statusMsg" style="display:none; background: rgba(34,211,238,0.1); border: 1px solid var(--acc); padding: 20px; border-radius: 20px; text-align: center; margin: 20px 0;">
+        <div id="statusMsg" style="display:none; border: 1px solid var(--acc); padding: 20px; border-radius: 20px; text-align: center; margin-bottom: 20px;">
             <div style="font-weight: 800;">✅ Jurnal Hari Ini Terkirim</div>
-            <button onclick="ijinkanPerbaikan()" style="background: var(--danger); color: white; border: none; padding: 10px 20px; border-radius: 12px; margin-top: 15px; cursor: pointer; font-weight: 800;">PERBAIKI DATA</button>
+            <button onclick="ijinkanPerbaikan()" style="background: var(--danger); border:none; padding:10px 20px; color:white; border-radius:12px; margin-top:15px; cursor:pointer; font-weight:800;">PERBAIKI DATA</button>
         </div>
 
         <div id="formSiswa">
             <div id="habitList"></div>
-            <textarea id="i-ref" class="input-box" rows="2" placeholder="Tulis hal baik hari ini..."></textarea>
+            <textarea id="i-ref" class="input-box" rows="2" placeholder="Hal baik hari ini..."></textarea>
             <button class="btn-save" onclick="kirimData()">💾 SIMPAN DATA</button>
         </div>
     </div>
 
     <div id="p-guru" class="container">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #334155;">
-            <div style="text-align: left;">
-                <h1 style="font-size: 1.5rem; margin:0; color:var(--acc);">SMPN 110 JAKARTA</h1>
-                <h1 style="font-size: 1.5rem; margin:0; color:var(--acc);">LAPORAN JURNAL 7 KEBIASAAN ANAK INDONESIA HEBAT</h1><br>
-                
-                <b id="subJudulGuru" style="color:#94a3b8; font-size: 1rem; font-weight: normal;">-</b>
-            </div>
-            <div style="display: flex; gap: 12px;">
-                <button onclick="renderMonitoring()" class="btn-icon">🔄</button>
-                <button onclick="move('p-login')" class="btn-icon" style="background:#ef4444;">🚪</button>
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; padding-bottom: 15px; margin-bottom: 15px;">
+ 
+            <div><h2 style="margin:0; color:var(--acc);">SMPN 110 JAKARTA<br>LAPORAN JURNAL 7 KEBIASAAN ANAK INDONESIA HEBAT</h2><small id="subJudulGuru"></small></div>
+            <div style="display: flex; gap: 10px;">
+                <button onclick="renderMonitoring()" class="input-box" style="width:50px; margin:0; padding:10px;">🔄</button>
+                <button onclick="move('p-login')" class="input-box" style="width:50px; margin:0; background:var(--danger); border:none; padding:10px;">🚪</button>
             </div>
         </div>
         <div class="table-res" id="tabelData"></div>
@@ -138,9 +114,17 @@
     let DB_SISWA = [];
     let GURU_TERPILIH = "";
 
+    const SHOLAT_RULES = {
+        'Subuh':   { start: '04:00', end: '06:15', icon: '🌑', color: '#fdcb6e' },
+        'Dzuhur':  { start: '11:45', end: '14:45', icon: '☀️', color: '#00cec9' },
+        'Ashar':   { start: '15:15', end: '17:45', icon: '🌤️', color: '#ff7675' },
+        'Magrib':  { start: '18:00', end: '19:10', icon: '🌅', color: '#a29bfe' },
+        'Isya':    { start: '19:15', end: '23:59', icon: '🌙', color: '#74b9ff' }
+    };
+
     const HABITS = [
         { i: "🌅", t: "Bangun", c: "#fbbf24", b: "rgba(251,191,36,0.2)" },
-        { i: "🙏", t: "Ibadah", c: "#a78bfa", b: "rgba(167,139,250,0.2)" },
+        { i: "🙏", t: "Beribadah", c: "#a78bfa", b: "rgba(167,139,250,0.2)" },
         { i: "🕌", t: "Sholat 5W", c: "#22d3ee", b: "rgba(34,211,238,0.2)" },
         { i: "⚽", t: "Olahraga", c: "#fb7185", b: "rgba(251,113,133,0.2)" },
         { i: "🥗", t: "Makan", c: "#34d399", b: "rgba(52,211,153,0.2)" },
@@ -153,68 +137,86 @@
         HABITS.forEach((h, i) => {
             document.getElementById('habitList').innerHTML += `
             <div class="habit-item" id="card-${i}" style="--c:${h.c}; --b:${h.b}" onclick="klikHabit(${i})">
-                <span style="font-size:2.2rem">${h.i}</span><span style="font-size:0.8rem; font-weight:800; text-transform:uppercase; margin-top:5px;">${h.t}</span>
+                <span style="font-size:2.2rem">${h.i}</span><span style="font-size:0.8rem; font-weight:800;">${h.t}</span>
                 <div id="badge-${i}" class="time-badge">--:--</div>
             </div>`;
         });
-        try {
-            const r = await fetch(SCRIPT_URL + "?action=getSiswa");
-            DB_SISWA = await r.json();
-            [...new Set(DB_SISWA.map(x => x[0]))].sort().forEach(k => {
-                let o = document.createElement('option'); o.value = k; o.textContent = "KELAS " + k;
-                document.getElementById('i-kelas').appendChild(o);
-            });
-        } catch (e) { }
+        const r = await fetch(SCRIPT_URL + "?action=getSiswa");
+        DB_SISWA = await r.json();
+        [...new Set(DB_SISWA.map(x => x[0]))].sort().forEach(k => {
+            let o = document.createElement('option'); o.value = k; o.textContent = "KELAS " + k;
+            document.getElementById('i-kelas').appendChild(o);
+        });
     };
 
     async function loginGuru() {
-        // STEP 1: PASSWORD POPUP
         const { value: p } = await Swal.fire({ 
-            title: 'KODE AKSES', 
-            input: 'password', 
-            inputPlaceholder: '••••',
-            showCancelButton: true,
-            confirmButtonText: '✅',
-            cancelButtonText: '✖',
-            buttonsStyling: false,
-            customClass: {
-                popup: 'premium-swal-popup',
-                title: 'premium-swal-title',
-                input: 'premium-swal-input',
-                confirmButton: 'btn-swal-icon btn-confirm',
-                cancelButton: 'btn-swal-icon btn-cancel'
-            }
+            title: 'KODE AKSES', input: 'password', showCancelButton: true,
+            confirmButtonText: '✅', cancelButtonText: '✖', buttonsStyling: false,
+            customClass: { popup: 'premium-swal-popup', input: 'premium-swal-input', confirmButton: 'btn-swal-icon btn-confirm', cancelButton: 'btn-swal-icon btn-cancel' }
         });
         
-        if (btoa(p) === "Z3VydTExMA==") {
-        const list = [...new Set(DB_SISWA.map(x => x[2]))].sort();
-        let o = {}; list.forEach(w => o[w] = w);
-
-            // STEP 2: PILIH NAMA GURU POPUP
+        if (btoa(p) === "Z3VydTExMA==") { // guru110
+            let o = {}; [...new Set(DB_SISWA.map(x => x[2]))].sort().forEach(w => o[w] = w);
             const { value: w } = await Swal.fire({ 
-                title: 'IDENTITAS GURU', 
-                input: 'select', 
-                inputOptions: o,
-                inputPlaceholder: 'Pilih Nama Anda',
-                showCancelButton: true,
-                confirmButtonText: '✅',
-                cancelButtonText: '✖',
-                buttonsStyling: false,
-                customClass: {
-                    popup: 'premium-swal-popup',
-                    title: 'premium-swal-title',
-                    input: 'premium-swal-input',
-                    confirmButton: 'btn-swal-icon btn-confirm',
-                    cancelButton: 'btn-swal-icon btn-cancel'
-                },
-                inputValidator: (v) => { if (!v) return 'Pilih nama dulu!' }
+                title: 'PILIH NAMA GURU', input: 'select', inputOptions: o, showCancelButton: true,
+                confirmButtonText: '✅', cancelButtonText: '✖', buttonsStyling: false,
+                customClass: { popup: 'premium-swal-popup', input: 'premium-swal-input', confirmButton: 'btn-swal-icon btn-confirm', cancelButton: 'btn-swal-icon btn-cancel' }
             });
-
             if (w) { GURU_TERPILIH = w; move('p-guru'); renderMonitoring(); }
         }
     }
 
-    // Fungsi pendukung tetap sama
+    async function klikHabit(i) {
+        if (i === 1) { setDone(i); document.getElementById('card-2').style.display = 'none'; }
+        else if (i === 2) {
+            document.getElementById('card-1').style.display = 'none';
+            let h = `<div class="sholat-popup-grid">`;
+            for (let s in SHOLAT_RULES) h += `<div class="sholat-card" style="--c:${SHOLAT_RULES[s].color};" onclick="validasiSholat('${s}')"><span>${SHOLAT_RULES[s].icon}</span><br><b>${s}</b></div>`;
+            Swal.fire({ title: 'WAKTU SHOLAT', background: '#1e293b', color: '#fff', html: h + `</div>`, showConfirmButton: false });
+        } else { setDone(i); }
+    }
+
+    window.validasiSholat = function(nama) {
+        const skrg = new Date();
+        const jamSekarang = skrg.getHours().toString().padStart(2, '0') + ":" + skrg.getMinutes().toString().padStart(2, '0');
+        const aturan = SHOLAT_RULES[nama];
+
+        if (jamSekarang < aturan.start) return Swal.fire({ icon: 'warning', title: 'Belum Waktunya!', text: `Mulai jam ${aturan.start}`, background: '#1e293b', color: '#fff' });
+        if (jamSekarang > aturan.end) return Swal.fire({ icon: 'error', title: 'Waktu Terlewat!', text: `Batas jam ${aturan.end}`, background: '#1e293b', color: '#fff' });
+
+        document.getElementById(`badge-2`).innerText = nama + " (" + jamSekarang + ")";
+        document.getElementById(`card-2`).classList.add('done');
+        Swal.close();
+    };
+
+    function setDone(i) {
+        const t = new Date().toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'}).replace('.',':');
+        document.getElementById(`badge-${i}`).innerText = t;
+        document.getElementById(`card-${i}`).classList.add('done');
+    }
+
+    // FUNGSI MEMBERSIHKAN TANGGAL 1899-12-30
+    function formatJamLaporan(val) {
+        if (!val || val === "--:--" || val === "") return "--:--";
+        if (typeof val === 'string' && val.includes('T')) {
+            const d = new Date(val);
+            return d.getHours().toString().padStart(2, '0') + ":" + d.getMinutes().toString().padStart(2, '0');
+        }
+        return val;
+    }
+
+    async function renderMonitoring() {
+        document.getElementById('subJudulGuru').innerText = "WALI KELAS: " + GURU_TERPILIH;
+        document.getElementById('tabelData').innerHTML = "<p style='text-align:center; padding:20px;'>Sinkronisasi...</p>";
+        const r = await fetch(SCRIPT_URL);
+        const data = await r.json();
+        const f = data.filter(x => x[3] === GURU_TERPILIH);
+        let h = `<table><thead><tr><th>NO</th><th>NAMA</th><th>KLS</th><th>TGL</th><th>BANGUN</th><th>IBADAH</th><th>SHOLAT</th><th>OLAH</th><th>MAKAN</th><th>BELAJAR</th><th>SOSIAL</th><th>TIDUR</th><th>REFLEKSI</th></tr></thead><tbody>`;
+        f.forEach((r, i) => h += `<tr><td>${i+1}</td><td style="color:var(--acc)">${r[2]}</td><td>${r[1]}</td><td>${r[0]}</td><td>${formatJamLaporan(r[4])}</td><td>${formatJamLaporan(r[5])}</td><td>${formatJamLaporan(r[6])}</td><td>${formatJamLaporan(r[7])}</td><td>${formatJamLaporan(r[8])}</td><td>${formatJamLaporan(r[9])}</td><td>${formatJamLaporan(r[10])}</td><td>${formatJamLaporan(r[11])}</td><td style="text-align:left; color:#94a3b8; font-weight:normal;">${r[12]}</td></tr>`);
+        document.getElementById('tabelData').innerHTML = h + `</tbody></table>`;
+    }
+
     async function loadNama() {
         const k = document.getElementById('i-kelas').value;
         const f = DB_SISWA.filter(x => x[0] === k);
@@ -228,62 +230,23 @@
         const k = document.getElementById('i-kelas').value;
         const d = DB_SISWA.find(x => x[0] === k && x[1] === n);
         document.getElementById('i-wali').value = d ? d[2] : "";
-        if (n) {
-            Swal.fire({ title: 'Cek Status...', didOpen: () => Swal.showLoading(), background: '#1e293b', color: '#fff' });
-            try {
-                const res = await fetch(SCRIPT_URL);
-                const data = await res.json();
-                const tgl = new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-                const sudahAda = data.find(row => row[0] === tgl && row[2] === n && row[1] === k);
-                if (sudahAda) { document.getElementById('formSiswa').style.display = 'none'; document.getElementById('statusMsg').style.display = 'block'; }
-                else { ijinkanPerbaikan(); }
-                Swal.close();
-            } catch (e) { Swal.close(); }
-        }
+    }
+
+    async function kirimData() {
+        if(!document.getElementById('i-nama').value) return Swal.fire('Pilih Nama!', '', 'warning');
+        Swal.fire({ title: 'Menyimpan...', didOpen: () => Swal.showLoading(), background: '#1e293b', color: '#fff' });
+        const payload = {
+            tanggal: new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }),
+            kelas: document.getElementById('i-kelas').value, nama: document.getElementById('i-nama').value,
+            wali: document.getElementById('i-wali').value,
+            h: HABITS.map((_, i) => document.getElementById(`badge-${i}`).innerText),
+            refleksi: document.getElementById('i-ref').value
+        };
+        await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
+        Swal.fire({ icon: 'success', title: 'Tersimpan!', background: '#1e293b', color: '#fff' }).then(() => location.reload());
     }
 
     function ijinkanPerbaikan() { document.getElementById('formSiswa').style.display = 'block'; document.getElementById('statusMsg').style.display = 'none'; }
-    function klikHabit(i) {
-        const t = new Date().toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'}).replace('.',':');
-        document.getElementById(`badge-${i}`).innerText = t;
-        document.getElementById(`card-${i}`).classList.add('done');
-    }
-    function formatJamLaporan(val) {
-        if (!val || val === "--:--") return "--:--";
-        if (typeof val === 'string' && val.includes('T')) {
-            const d = new Date(val);
-            return d.getHours().toString().padStart(2, '0') + ":" + d.getMinutes().toString().padStart(2, '0');
-        }
-        return val;
-    }
-    async function renderMonitoring() {
-        document.getElementById('subJudulGuru').innerText = "WALI KELAS: " + GURU_TERPILIH;
-        document.getElementById('tabelData').innerHTML = "<p style='text-align:center; padding:30px; color:var(--acc);'>Sinkronisasi data...</p>";
-        try {
-            const r = await fetch(SCRIPT_URL);
-            const data = await r.json();
-            const f = data.filter(x => x[3] === GURU_TERPILIH);
-            let h = `<table><thead><tr><th>NO</th><th>NAMA SISWA</th><th>KLS</th><th>TGL</th><th>BANGUN</th><th>IBADAH</th><th>SHOLAT</th><th>OLAH</th><th>MAKAN</th><th>BELAJAR</th><th>SOSIAL</th><th>TIDUR</th><th>REFLEKSI</th></tr></thead><tbody>`;
-            f.forEach((r, i) => h += `<tr><td>${i+1}</td><td style="color:var(--acc);">${r[2]}</td><td>${r[1]}</td><td style="font-size:0.8rem; color:#64748b;">${r[0]}</td><td>${formatJamLaporan(r[4])}</td><td>${formatJamLaporan(r[5])}</td><td>${formatJamLaporan(r[6])}</td><td>${formatJamLaporan(r[7])}</td><td>${formatJamLaporan(r[8])}</td><td>${formatJamLaporan(r[9])}</td><td>${formatJamLaporan(r[10])}</td><td>${formatJamLaporan(r[11])}</td><td class="ref-text">${r[12]}</td></tr>`);
-            document.getElementById('tabelData').innerHTML = h + `</tbody></table>`;
-        } catch(e) { }
-    }
-    async function kirimData() {
-        const nama = document.getElementById('i-nama')?.value;
-        if(!nama) return Swal.fire('Pilih Nama!', '', 'warning');
-        const tgl = new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-        Swal.fire({ title: 'Menyimpan...', didOpen: () => Swal.showLoading(), background: '#1e293b', color: '#fff' });
-        try {
-            const payload = {
-                tanggal: tgl, kelas: document.getElementById('i-kelas').value, nama: nama,
-                wali: document.getElementById('i-wali').value,
-                h: HABITS.map((_, i) => document.getElementById(`badge-${i}`).innerText),
-                refleksi: document.getElementById('i-ref').value
-            };
-            await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
-            Swal.fire({ icon: 'success', title: 'Tersimpan!', background: '#1e293b', color: '#fff' }).then(() => location.reload());
-        } catch(e) { }
-    }
     function move(id) {
         document.querySelectorAll('.container').forEach(e => { e.style.display = 'none'; e.classList.remove('guru-mode'); });
         const t = document.getElementById(id); t.style.display = 'block';
