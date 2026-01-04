@@ -2,111 +2,135 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Jurnal 7 KAIH - SMPN 110 Jakarta</title>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
     <style>
         :root { 
             --bg: #0f172a; --card: #1e293b; --txt: #f8fafc; --acc: #22d3ee; 
-            --danger: #ef4444; --green: #10b981; 
+            --danger: #ef4444; --green: #10b981; --border: #334155;
         }
 
         body { 
             font-family: 'Nunito', sans-serif; background: var(--bg); color: var(--txt); 
-            margin: 0; padding: 15px; display: flex; flex-direction: column; 
-            align-items: center; justify-content: center; min-height: 100vh; box-sizing: border-box;
+            margin: 0; padding: 0; min-height: 100vh;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; 
         }
 
-        /* --- POPUP STYLE (ICON ONLY BUTTONS) --- */
-        .premium-swal-popup {
-            background: rgba(30, 41, 59, 0.98) !important;
-            backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 35px !important;
+        /* CONTAINER UTAMA */
+        .container { 
+            width: 95%; max-width: 420px; background: var(--card); border-radius: 28px; 
+            padding: 30px; display: none; box-sizing: border-box; 
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5); margin: 15px 0;
+            text-align: center; border: 1px solid var(--border);
+            animation: fadeIn 0.5s ease;
         }
-        .premium-swal-input {
-            background: rgba(15, 23, 42, 0.6) !important; border: 2px solid rgba(34, 211, 238, 0.2) !important;
-            border-radius: 18px !important; color: white !important; text-align: center !important;
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* MENU UTAMA - IKON DIPERBESAR */
+        .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 25px; }
+        .btn-square { 
+            aspect-ratio: 1/1; border-radius: 20px; border: none; color: #fff; 
+            font-weight: 800; cursor: pointer; display: flex; flex-direction: column; 
+            align-items: center; justify-content: center; transition: 0.3s; 
         }
-        .swal2-actions { gap: 20px !important; margin-top: 25px !important; }
-        .btn-swal-icon {
-            width: 60px !important; height: 60px !important; border-radius: 50% !important;
-            border: none !important; display: flex !important; align-items: center !important;
-            justify-content: center !important; font-size: 1.5rem !important; cursor: pointer !important;
-            transition: 0.3s !important; box-shadow: 0 8px 15px rgba(0,0,0,0.3) !important;
+        .btn-square span { font-size: 4.5rem; line-height: 1; display: block; margin-bottom: 10px; }
+
+        /* INPUT & DROPDOWN */
+        .input-elegant {
+            width: 100%; padding: 15px; background: rgba(15, 23, 42, 0.6);
+            border: 2px solid var(--border); border-radius: 15px; color: var(--txt);
+            text-align: center; font-size: 1rem; margin-bottom: 15px;
+            transition: 0.3s; outline: none; box-sizing: border-box;
+            font-family: 'Nunito', sans-serif; cursor: pointer;
         }
-        .btn-confirm { background: var(--green) !important; color: white !important; }
-        .btn-cancel { background: var(--danger) !important; color: white !important; }
-        .btn-swal-icon:hover { transform: scale(1.1); }
+        .input-elegant option { background: #1e293b; color: white; }
 
-        /* --- CONTAINER JURNAL --- */
-        .container { width: 100%; max-width: 420px; background: var(--card); border-radius: 28px; padding: 25px; display: none; box-sizing: border-box; box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
-        .container.guru-mode { max-width: 100% !important; width: 98vw; background: #0f172a; }
-        
-        .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; width: 100%; margin-top: 30px; }
-        .btn-square { aspect-ratio: 1/1; border-radius: 32px; border: none; color: white; font-weight: 800; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; transition: 0.3s; }
-        .btn-square span { font-size: 3.5rem; }
+        /* HABIT GRID */
+        #habitList { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 15px 0; }
+        .habit-item { display: flex; flex-direction: column; align-items: center; padding: 12px; border-radius: 18px; border: 2px solid var(--c); opacity: 0.3; cursor: pointer; transition: 0.3s; }
+        .habit-item.done { opacity: 1; background: var(--b); }
+        .time-badge { font-size: 0.65rem; background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 6px; margin-top: 4px; }
 
-        .input-box { width: 100%; padding: 16px; background: #1e293b; border: 2px solid #334155; color: #fff; border-radius: 16px; box-sizing: border-box; margin-bottom: 15px; text-align: center; font-size: 1rem; }
-        
-        #habitList { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 20px; }
-        .habit-item { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 15px; border-radius: 24px; border: 3px solid var(--c); cursor: pointer; transition: 0.4s; background: transparent; opacity: 0.3; }
-        .habit-item.done { opacity: 1 !important; background: var(--b) !important; }
+        /* MONITORING TABLE & STICKY */
+        .container.guru-mode { max-width: 100% !important; width: 100%; background: var(--bg); border: none; align-self: flex-start; }
+        .table-wrapper { width: 100%; overflow-x: auto; margin-top: 15px; border-radius: 12px; border: 1px solid var(--border); }
+        table { border-collapse: collapse; min-width: 1100px; font-size: 0.75rem; width: 100%; }
+        table th { background: #1e293b; color: var(--acc); padding: 12px 8px; border: 1px solid var(--border); }
+        table td { padding: 10px 8px; border: 1px solid var(--border); text-align: center; background: #0f172a; }
+        th:nth-child(2), td:nth-child(2) { position: sticky; left: 0; z-index: 10; background: #1e293b !important; border-right: 2px solid var(--acc) !important; min-width: 140px; text-align: left; }
 
-        .sholat-popup-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 10px; }
-        .sholat-card { padding: 15px; border-radius: 20px; border: 2px solid var(--c); cursor: pointer; text-align: center; }
+        /* BUTTONS & NAV */
+        .btn-main { width: 100%; padding: 15px; border-radius: 15px; border: none; font-weight: 800; cursor: pointer; font-size: 1rem; }
+        .nav-guru { position: fixed; top: 10px; right: 10px; display: none; gap: 8px; z-index: 1000; }
+        .btn-icon { width: 40px; height: 40px; border-radius: 10px; border: none; color: white; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+        .report-footer { margin-top: 30px; display: none; justify-content: space-around; font-size: 0.7rem; padding-bottom: 50px; }
 
-        .time-badge { margin-top: 5px; font-size: 0.85rem; background: rgba(0,0,0,0.5); padding: 3px 12px; border-radius: 10px; font-weight: 800; }
-        .btn-save { background: var(--green); color: white; width: 100%; padding: 18px; border: none; border-radius: 18px; font-weight: 800; cursor: pointer; font-size: 1.1rem; }
-        
-        /* MONITORING */
-        .table-res { width: 100%; overflow-x: auto; margin-top: 20px; border-radius: 20px; border: 1px solid #334155; }
-        table { width: 100%; border-collapse: collapse; min-width: 1400px; }
-        th { background: #1e293b; color: var(--acc); padding: 20px 10px; font-size: 0.8rem; text-transform: uppercase; }
-        td { padding: 15px 10px; border-bottom: 1px solid #1e293b; text-align: center; color: #f1f5f9; font-weight: 700; }
-        tr:nth-child(even) { background-color: #161e2e; }
+        /* POPUP SHOLAT */
+        .sholat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+        .btn-sholat { padding: 12px; border-radius: 12px; border: 2px solid var(--acc); background: #0f172a; color: white; font-weight: bold; cursor: pointer; }
+
+        /* CETAK 1 HALAMAN */
+        @media print {
+            @page { size: landscape; margin: 0.5cm; }
+            .nav-guru, .swal2-container, #p-login, #p-akses-guru, #p-siswa { display: none !important; }
+            body, html { background: white !important; color: black !important; margin: 0 !important; }
+            .container.guru-mode { width: 100% !important; padding: 0 !important; background: white !important; border: none !important;}
+            table { font-size: 7pt !important; width: 100% !important; border: 0.5pt solid black !important; }
+            table th, table td { border: 0.5pt solid black !important; padding: 2px !important; color: black !important; background: white !important; }
+            td:nth-child(2), th:nth-child(2) { position: static !important; border-right: 0.5pt solid black !important; }
+            .report-footer { display: flex !important; margin-top: 15px !important; page-break-inside: avoid !important; }
+        }
     </style>
 </head>
 <body>
 
-    <div id="p-login" class="container" style="display: block; text-align: center;">
-        <div style="font-size: 5rem; margin-bottom: 15px;">🏫</div>
-        <h2 style="letter-spacing: -1px; margin-bottom: 5px;">JURNAL 7 KAIH</h2>
-        <p style="color: var(--acc); font-weight: 800; margin-top: 0;">SMPN 110 JAKARTA</p>
+    <div id="p-login" class="container" style="display: block;">
+        <div style="font-size: 3rem;">🏫</div>
+        <h2 style="margin: 5px 0;">SMPN 110 JAKARTA</h2>
+        <p style="color: var(--acc); font-weight: 800; font-size: 0.9rem;">JURNAL 7 KEBIASAAN ANAK INDONESIA HEBAT</p>
         <div class="menu-grid">
             <button class="btn-square" style="background: var(--green);" onclick="move('p-siswa')"><span>👨‍🎓</span>SISWA</button>
-            <button class="btn-square" style="background: #0ea5e9;" onclick="loginGuru()"><span>👨‍🏫</span>GURU</button>
+            <button class="btn-square" style="background: #0ea5e9;" onclick="move('p-akses-guru')"><span>👨‍🏫</span>GURU</button>
         </div>
+    </div>
+
+    <div id="p-akses-guru" class="container">
+        <div onclick="move('p-login')" style="cursor:pointer; text-align: left; color: var(--acc); font-weight: 800; margin-bottom: 20px;">⬅ KEMBALI</div>
+        <div style="font-size: 3rem;">🔐</div>
+        <h2>Akses Monitoring</h2>
+        <input type="password" id="passGuru" class="input-elegant" placeholder="Kode Akses">
+        <select id="selectGuru" class="input-elegant"><option value="">-- PILIH NAMA GURU --</option></select>
+        <button class="btn-main" style="background: var(--acc); color: #0f172a;" onclick="cekAkses()">MASUK LAPORAN</button>
     </div>
 
     <div id="p-siswa" class="container">
-        <div onclick="move('p-login')" style="cursor:pointer; margin-bottom: 25px; color: var(--acc); font-weight: 800;">⬅ KEMBALI</div>
-        <select id="i-kelas" class="input-box" onchange="loadNama()"><option value="">-- PILIH KELAS --</option></select>
-        <div id="c-nama"><select class="input-box" disabled><option>PILIH KELAS DULU</option></select></div>
-        <input type="text" id="i-wali" class="input-box" readonly placeholder="WALI KELAS" style="background:transparent; border-color:var(--acc); color:var(--acc);">
-        
-        <div id="statusMsg" style="display:none; border: 1px solid var(--acc); padding: 20px; border-radius: 20px; text-align: center; margin-bottom: 20px;">
-            <div style="font-weight: 800;">✅ Jurnal Hari Ini Terkirim</div>
-            <button onclick="ijinkanPerbaikan()" style="background: var(--danger); border:none; padding:10px 20px; color:white; border-radius:12px; margin-top:15px; cursor:pointer; font-weight:800;">PERBAIKI DATA</button>
-        </div>
-
-        <div id="formSiswa">
-            <div id="habitList"></div>
-            <textarea id="i-ref" class="input-box" rows="2" placeholder="Hal baik hari ini..."></textarea>
-            <button class="btn-save" onclick="kirimData()">💾 SIMPAN DATA</button>
-        </div>
+        <div onclick="move('p-login')" style="cursor:pointer; text-align: left; color: var(--acc); font-weight: 800; margin-bottom: 15px;">⬅ KEMBALI</div>
+        <select id="i-kelas" class="input-elegant" onchange="loadSiswa()"><option value="">-- PILIH KELAS --</option></select>
+        <div id="c-nama"><select class="input-elegant" disabled><option>PILIH KELAS DULU</option></select></div>
+        <input type="text" id="i-wali" class="input-elegant" style="opacity: 0.6; pointer-events:none" readonly placeholder="WALI KELAS">
+        <div id="habitList"></div>
+        <textarea id="i-ref" class="input-elegant" rows="2" placeholder="Hal baik hari ini..."></textarea>
+        <button class="btn-main" style="background: var(--green); color: white;" onclick="kirimData()">💾 SIMPAN JURNAL</button>
     </div>
 
     <div id="p-guru" class="container">
-        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; padding-bottom: 15px; margin-bottom: 15px;">
- 
-            <div><h2 style="margin:0; color:var(--acc);">SMPN 110 JAKARTA<br>LAPORAN JURNAL 7 KEBIASAAN ANAK INDONESIA HEBAT</h2><small id="subJudulGuru"></small></div>
-            <div style="display: flex; gap: 10px;">
-                <button onclick="renderMonitoring()" class="input-box" style="width:50px; margin:0; padding:10px;">🔄</button>
-                <button onclick="move('p-login')" class="input-box" style="width:50px; margin:0; background:var(--danger); border:none; padding:10px;">🚪</button>
-            </div>
+        <div class="nav-guru">
+            <button class="btn-icon" style="background: #64748b;" onclick="renderMonitoring()">🔄</button>
+            <button class="btn-icon" style="background: #10b981;" onclick="window.print()">🖨️</button>
+            <button class="btn-icon" style="background: #ef4444;" onclick="move('p-login')">🚪</button>
         </div>
-        <div class="table-res" id="tabelData"></div>
+        <h3 style="margin: 0; color: var(--acc);">SMPN110 JAKARTA</h3>
+        <h3 style="margin: 0; color: var(--acc);">LAPORAN JURNAL 7 KEBIASAAN ANAK INDONESIA HEBAT</h3><br>
+        
+        <p id="infoLap" style="font-size: 0.8rem; opacity: 0.7;"></p>
+        <div class="table-wrapper"><table id="tabelData"></table></div>
+        <div class="report-footer">
+            <div style="text-align: center; width: 45%;"><p>Mengetahui,</p><p>Kepala SMPN 110 Jakarta</p><div style="height: 40px;"></div><p><b>____________________</b></p></div>
+            <div style="text-align: center; width: 45%;"><p>Jakarta, <span id="tglCetak"></span></p><p>Wali Kelas</p><div style="height: 40px;"></div><p><b id="namaGuruTtd"></b></p></div>
+        </div>
     </div>
 
 <script>
@@ -115,11 +139,11 @@
     let GURU_TERPILIH = "";
 
     const SHOLAT_RULES = {
-        'Subuh':   { start: '04:00', end: '06:15', icon: '🌑', color: '#fdcb6e' },
-        'Dzuhur':  { start: '11:45', end: '14:45', icon: '☀️', color: '#00cec9' },
-        'Ashar':   { start: '15:15', end: '17:45', icon: '🌤️', color: '#ff7675' },
-        'Magrib':  { start: '18:00', end: '19:10', icon: '🌅', color: '#a29bfe' },
-        'Isya':    { start: '19:15', end: '23:59', icon: '🌙', color: '#74b9ff' }
+        'Subuh':  { start: '04:00', end: '06:15', icon: '🌑' },
+        'Dzuhur': { start: '11:45', end: '14:45', icon: '☀️' },
+        'Ashar':  { start: '15:15', end: '17:45', icon: '🌤️' },
+        'Magrib': { start: '18:00', end: '19:10', icon: '🌅' },
+        'Isya':   { start: '19:15', end: '23:59', icon: '🌙' }
     };
 
     const HABITS = [
@@ -133,11 +157,20 @@
         { i: "😴", t: "Tidur", c: "#2dd4bf", b: "rgba(45,212,191,0.2)" }
     ];
 
+    function formatJam(str) {
+        if (!str || str === "--:--") return "-";
+        if (str.includes("T")) {
+            let bagianJam = str.split("T")[1];
+            return bagianJam.substring(0, 5);
+        }
+        return str;
+    }
+
     window.onload = async () => {
         HABITS.forEach((h, i) => {
             document.getElementById('habitList').innerHTML += `
             <div class="habit-item" id="card-${i}" style="--c:${h.c}; --b:${h.b}" onclick="klikHabit(${i})">
-                <span style="font-size:2.2rem">${h.i}</span><span style="font-size:0.8rem; font-weight:800;">${h.t}</span>
+                <span style="font-size:1.8rem">${h.i}</span><span style="font-size:0.6rem; font-weight:800;">${h.t}</span>
                 <div id="badge-${i}" class="time-badge">--:--</div>
             </div>`;
         });
@@ -147,45 +180,50 @@
             let o = document.createElement('option'); o.value = k; o.textContent = "KELAS " + k;
             document.getElementById('i-kelas').appendChild(o);
         });
+        const sg = document.getElementById('selectGuru');
+        [...new Set(DB_SISWA.map(x => x[2]))].sort().forEach(g => {
+            let o = document.createElement('option'); o.value = g; o.textContent = g;
+            sg.appendChild(o);
+        });
     };
 
-    async function loginGuru() {
-        const { value: p } = await Swal.fire({ 
-            title: 'KODE AKSES', input: 'password', showCancelButton: true,
-            confirmButtonText: '✅', cancelButtonText: '✖', buttonsStyling: false,
-            customClass: { popup: 'premium-swal-popup', input: 'premium-swal-input', confirmButton: 'btn-swal-icon btn-confirm', cancelButton: 'btn-swal-icon btn-cancel' }
-        });
-        
-        if (btoa(p) === "Z3VydTExMA==") { // guru110
-            let o = {}; [...new Set(DB_SISWA.map(x => x[2]))].sort().forEach(w => o[w] = w);
-            const { value: w } = await Swal.fire({ 
-                title: 'PILIH NAMA GURU', input: 'select', inputOptions: o, showCancelButton: true,
-                confirmButtonText: '✅', cancelButtonText: '✖', buttonsStyling: false,
-                customClass: { popup: 'premium-swal-popup', input: 'premium-swal-input', confirmButton: 'btn-swal-icon btn-confirm', cancelButton: 'btn-swal-icon btn-cancel' }
-            });
-            if (w) { GURU_TERPILIH = w; move('p-guru'); renderMonitoring(); }
-        }
-    }
+    function klikHabit(i) {
+        // VALIDASI: CEK APAKAH KELAS DAN NAMA SUDAH DIPILIH
+        const kls = document.getElementById('i-kelas').value;
+        const namaField = document.getElementById('i-nama');
+        const nama = namaField ? namaField.value : "";
 
-    async function klikHabit(i) {
-        if (i === 1) { setDone(i); document.getElementById('card-2').style.display = 'none'; }
-        else if (i === 2) {
+        if (!kls || !nama) {
+            return Swal.fire({
+                icon: 'warning',
+                title: 'Belum Lengkap!',
+                text: 'Silakan pilih KELAS dan NAMA Anda terlebih dahulu.',
+                confirmButtonColor: '#22d3ee'
+            });
+        }
+
+        if (i === 1) { 
+            document.getElementById('card-2').style.display = 'none'; 
+            setDone(i); 
+        } 
+        else if (i === 2) { 
             document.getElementById('card-1').style.display = 'none';
-            let h = `<div class="sholat-popup-grid">`;
-            for (let s in SHOLAT_RULES) h += `<div class="sholat-card" style="--c:${SHOLAT_RULES[s].color};" onclick="validasiSholat('${s}')"><span>${SHOLAT_RULES[s].icon}</span><br><b>${s}</b></div>`;
-            Swal.fire({ title: 'WAKTU SHOLAT', background: '#1e293b', color: '#fff', html: h + `</div>`, showConfirmButton: false });
+            let htmlSholat = `<div class="sholat-grid">`;
+            for(let s in SHOLAT_RULES) { 
+                htmlSholat += `<button class="btn-sholat" onclick="validasiSholat('${s}')">${SHOLAT_RULES[s].icon}<br>${s}</button>`; 
+            }
+            htmlSholat += `</div>`;
+            Swal.fire({ title: 'Waktu Sholat', html: htmlSholat, showConfirmButton: false, background: '#1e293b', color: '#fff' });
         } else { setDone(i); }
     }
 
     window.validasiSholat = function(nama) {
         const skrg = new Date();
-        const jamSekarang = skrg.getHours().toString().padStart(2, '0') + ":" + skrg.getMinutes().toString().padStart(2, '0');
-        const aturan = SHOLAT_RULES[nama];
-
-        if (jamSekarang < aturan.start) return Swal.fire({ icon: 'warning', title: 'Belum Waktunya!', text: `Mulai jam ${aturan.start}`, background: '#1e293b', color: '#fff' });
-        if (jamSekarang > aturan.end) return Swal.fire({ icon: 'error', title: 'Waktu Terlewat!', text: `Batas jam ${aturan.end}`, background: '#1e293b', color: '#fff' });
-
-        document.getElementById(`badge-2`).innerText = nama + " (" + jamSekarang + ")";
+        const jam = skrg.getHours().toString().padStart(2, '0') + ":" + skrg.getMinutes().toString().padStart(2, '0');
+        const r = SHOLAT_RULES[nama];
+        if (jam < r.start) return Swal.fire('Belum Waktunya!', `Sholat ${nama} mulai jam ${r.start}`, 'warning');
+        if (jam > r.end) return Swal.fire('Waktu Terlewat!', `Batas ${nama} adalah jam ${r.end}`, 'error');
+        document.getElementById(`badge-2`).innerText = `${nama} (${jam})`;
         document.getElementById(`card-2`).classList.add('done');
         Swal.close();
     };
@@ -196,36 +234,68 @@
         document.getElementById(`card-${i}`).classList.add('done');
     }
 
-    // FUNGSI MEMBERSIHKAN TANGGAL 1899-12-30
-    function formatJamLaporan(val) {
-        if (!val || val === "--:--" || val === "") return "--:--";
-        if (typeof val === 'string' && val.includes('T')) {
-            const d = new Date(val);
-            return d.getHours().toString().padStart(2, '0') + ":" + d.getMinutes().toString().padStart(2, '0');
-        }
-        return val;
+    function move(id) {
+        document.querySelectorAll('.container').forEach(e => e.style.display = 'none');
+        document.body.style.justifyContent = "center";
+        const t = document.getElementById(id);
+        t.style.display = 'block';
+        if(id === 'p-guru') {
+            t.classList.add('guru-mode');
+            document.body.style.justifyContent = "flex-start";
+            document.querySelector('.nav-guru').style.display = 'flex';
+        } else { document.querySelector('.nav-guru').style.display = 'none'; }
+    }
+
+    function cekAkses() {
+        const pass = document.getElementById('passGuru').value;
+        const guru = document.getElementById('selectGuru').value;
+        if (btoa(pass) === "Z3VydTExMA==" && guru !== "") {
+            GURU_TERPILIH = guru;
+            move('p-guru');
+            renderMonitoring();
+        } else { Swal.fire('Gagal', 'Password salah atau guru belum dipilih', 'error'); }
     }
 
     async function renderMonitoring() {
-        document.getElementById('subJudulGuru').innerText = "WALI KELAS: " + GURU_TERPILIH;
-        document.getElementById('tabelData').innerHTML = "<p style='text-align:center; padding:20px;'>Sinkronisasi...</p>";
-        const r = await fetch(SCRIPT_URL);
-        const data = await r.json();
-        const f = data.filter(x => x[3] === GURU_TERPILIH);
-        let h = `<table><thead><tr><th>NO</th><th>NAMA</th><th>KLS</th><th>TGL</th><th>BANGUN</th><th>IBADAH</th><th>SHOLAT</th><th>OLAH</th><th>MAKAN</th><th>BELAJAR</th><th>SOSIAL</th><th>TIDUR</th><th>REFLEKSI</th></tr></thead><tbody>`;
-        f.forEach((r, i) => h += `<tr><td>${i+1}</td><td style="color:var(--acc)">${r[2]}</td><td>${r[1]}</td><td>${r[0]}</td><td>${formatJamLaporan(r[4])}</td><td>${formatJamLaporan(r[5])}</td><td>${formatJamLaporan(r[6])}</td><td>${formatJamLaporan(r[7])}</td><td>${formatJamLaporan(r[8])}</td><td>${formatJamLaporan(r[9])}</td><td>${formatJamLaporan(r[10])}</td><td>${formatJamLaporan(r[11])}</td><td style="text-align:left; color:#94a3b8; font-weight:normal;">${r[12]}</td></tr>`);
-        document.getElementById('tabelData').innerHTML = h + `</tbody></table>`;
+        document.getElementById('tabelData').innerHTML = "<tr><td colspan='13'>Sinkronisasi...</td></tr>";
+        document.getElementById('namaGuruTtd').innerText = GURU_TERPILIH;
+        document.getElementById('tglCetak').innerText = new Date().toLocaleDateString('id-ID', {day:'numeric', month:'long', year:'numeric'});
+        document.getElementById('infoLap').innerText = "Wali Kelas: " + GURU_TERPILIH;
+
+        const res = await fetch(SCRIPT_URL);
+        const data = await res.json();
+        const filtered = data.filter(x => x[3] === GURU_TERPILIH);
+        
+        let h = `<thead><tr><th>NO</th><th>NAMA SISWA</th><th>KLS</th><th>TGL</th><th>BANGUN</th><th>IBADAH</th><th>SHOLAT</th><th>OLAH</th><th>MAKAN</th><th>BELAJAR</th><th>SOSIAL</th><th>TIDUR</th><th>REFLEKSI</th></tr></thead><tbody>`;
+        filtered.forEach((r, i) => {
+            h += `<tr>
+                <td>${i+1}</td>
+                <td>${r[2]}</td>
+                <td>${r[1]}</td>
+                <td>${r[0]}</td>
+                <td>${formatJam(r[4])}</td>
+                <td>${formatJam(r[5])}</td>
+                <td>${formatJam(r[6])}</td>
+                <td>${formatJam(r[7])}</td>
+                <td>${formatJam(r[8])}</td>
+                <td>${formatJam(r[9])}</td>
+                <td>${formatJam(r[10])}</td>
+                <td>${formatJam(r[11])}</td>
+                <td style="text-align:left; font-size:0.55rem">${r[12] || '-'}</td>
+            </tr>`;
+        });
+        document.getElementById('tabelData').innerHTML = h + `</tbody>`;
     }
 
-    async function loadNama() {
+    async function loadSiswa() {
         const k = document.getElementById('i-kelas').value;
-        const f = DB_SISWA.filter(x => x[0] === k);
-        let h = `<select id="i-nama" class="input-box" onchange="setWali()"><option value="">-- PILIH NAMA --</option>`;
-        f.forEach(m => h += `<option value="${m[1]}">${m[1]}</option>`);
+        const filtered = DB_SISWA.filter(x => x[0] === k);
+        let h = `<select id="i-nama" class="input-elegant" onchange="setWali()"><option value="">-- PILIH NAMA --</option>`;
+        filtered.forEach(m => h += `<option value="${m[1]}">${m[1]}</option>`);
         document.getElementById('c-nama').innerHTML = h + `</select>`;
     }
 
-    async function setWali() {
+    function setWali() {
         const n = document.getElementById('i-nama').value;
         const k = document.getElementById('i-kelas').value;
         const d = DB_SISWA.find(x => x[0] === k && x[1] === n);
@@ -233,24 +303,16 @@
     }
 
     async function kirimData() {
-        if(!document.getElementById('i-nama').value) return Swal.fire('Pilih Nama!', '', 'warning');
-        Swal.fire({ title: 'Menyimpan...', didOpen: () => Swal.showLoading(), background: '#1e293b', color: '#fff' });
+        if(!document.getElementById('i-nama').value) return Swal.fire('Pilih Nama!');
+        Swal.fire({ title: 'Menyimpan...', didOpen: () => Swal.showLoading() });
         const payload = {
             tanggal: new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }),
-            kelas: document.getElementById('i-kelas').value, nama: document.getElementById('i-nama').value,
-            wali: document.getElementById('i-wali').value,
+            kelas: document.getElementById('i-kelas').value, nama: document.getElementById('i-nama').value, wali: document.getElementById('i-wali').value,
             h: HABITS.map((_, i) => document.getElementById(`badge-${i}`).innerText),
             refleksi: document.getElementById('i-ref').value
         };
         await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
-        Swal.fire({ icon: 'success', title: 'Tersimpan!', background: '#1e293b', color: '#fff' }).then(() => location.reload());
-    }
-
-    function ijinkanPerbaikan() { document.getElementById('formSiswa').style.display = 'block'; document.getElementById('statusMsg').style.display = 'none'; }
-    function move(id) {
-        document.querySelectorAll('.container').forEach(e => { e.style.display = 'none'; e.classList.remove('guru-mode'); });
-        const t = document.getElementById(id); t.style.display = 'block';
-        if(id === 'p-guru') t.classList.add('guru-mode');
+        Swal.fire('Berhasil!', '', 'success').then(() => location.reload());
     }
 </script>
 </body>
