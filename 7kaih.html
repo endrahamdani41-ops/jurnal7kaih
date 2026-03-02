@@ -18,7 +18,6 @@
             display: flex; flex-direction: column; align-items: center; justify-content: center; 
         }
 
-        /* CONTAINER UTAMA */
         .container { 
             width: 95%; max-width: 420px; background: var(--card); border-radius: 28px; 
             padding: 30px; display: none; box-sizing: border-box; 
@@ -29,7 +28,6 @@
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* MENU UTAMA - IKON DIPERBESAR */
         .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 25px; }
         .btn-square { 
             aspect-ratio: 1/1; border-radius: 20px; border: none; color: #fff; 
@@ -38,7 +36,6 @@
         }
         .btn-square span { font-size: 4.5rem; line-height: 1; display: block; margin-bottom: 10px; }
 
-        /* INPUT & DROPDOWN */
         .input-elegant {
             width: 100%; padding: 15px; background: rgba(15, 23, 42, 0.6);
             border: 2px solid var(--border); border-radius: 15px; color: var(--txt);
@@ -48,13 +45,11 @@
         }
         .input-elegant option { background: #1e293b; color: white; }
 
-        /* HABIT GRID */
         #habitList { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 15px 0; }
         .habit-item { display: flex; flex-direction: column; align-items: center; padding: 12px; border-radius: 18px; border: 2px solid var(--c); opacity: 0.3; cursor: pointer; transition: 0.3s; }
         .habit-item.done { opacity: 1; background: var(--b); }
         .time-badge { font-size: 0.65rem; background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 6px; margin-top: 4px; }
 
-        /* MONITORING TABLE & STICKY */
         .container.guru-mode { max-width: 100% !important; width: 100%; background: var(--bg); border: none; align-self: flex-start; }
         .table-wrapper { width: 100%; overflow-x: auto; margin-top: 15px; border-radius: 12px; border: 1px solid var(--border); }
         table { border-collapse: collapse; min-width: 1100px; font-size: 0.75rem; width: 100%; }
@@ -62,31 +57,19 @@
         table td { padding: 10px 8px; border: 1px solid var(--border); text-align: center; background: #0f172a; }
         th:nth-child(2), td:nth-child(2) { position: sticky; left: 0; z-index: 10; background: #1e293b !important; border-right: 2px solid var(--acc) !important; min-width: 140px; text-align: left; }
 
-        /* BUTTONS & NAV - TANPA BACKGROUND */
         .btn-main { width: 100%; padding: 15px; border-radius: 15px; border: none; font-weight: 800; cursor: pointer; font-size: 1rem; }
-        .nav-guru { position: fixed; top: 10px; right: 10px; display: none; gap: 15px; z-index: 1000; }
-        .btn-icon { 
-            background: transparent; /* MENGHAPUS BACKGROUND */
-            border: none; 
-            font-size: 1.8rem; /* Memperbesar ikon navigasi agar mudah diklik */
-            cursor: pointer; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center;
-            transition: transform 0.2s;
-        }
-        .btn-icon:active { transform: scale(0.9); }
+        
+        .nav-guru { position: fixed; top: 10px; right: 10px; display: none; gap: 10px; z-index: 1000; background: rgba(30, 41, 59, 0.8); padding: 8px; border-radius: 15px; backdrop-filter: blur(5px); border: 1px solid var(--border); }
+        .btn-icon { background: transparent; border: none; font-size: 1.6rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; padding: 5px; }
         
         .report-footer { margin-top: 30px; display: none; justify-content: space-around; font-size: 0.7rem; padding-bottom: 50px; }
 
-        /* POPUP SHOLAT */
-        .sholat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
-        .btn-sholat { padding: 12px; border-radius: 12px; border: 2px solid var(--acc); background: #0f172a; color: white; font-weight: bold; cursor: pointer; }
+        .filter-panel { display: flex; gap: 10px; justify-content: center; margin-bottom: 20px; flex-wrap: wrap; }
+        .filter-panel .input-elegant { width: auto; min-width: 180px; margin-bottom: 0; padding: 10px; font-size: 0.85rem; }
 
-        /* CETAK 1 HALAMAN */
         @media print {
             @page { size: landscape; margin: 0.5cm; }
-            .nav-guru, .swal2-container, #p-login, #p-akses-guru, #p-siswa { display: none !important; }
+            .nav-guru, .swal2-container, #p-login, #p-akses-guru, #p-siswa, .filter-panel { display: none !important; }
             body, html { background: white !important; color: black !important; margin: 0 !important; }
             .container.guru-mode { width: 100% !important; padding: 0 !important; background: white !important; border: none !important;}
             table { font-size: 7pt !important; width: 100% !important; border: 0.5pt solid black !important; }
@@ -129,14 +112,30 @@
 
     <div id="p-guru" class="container">
         <div class="nav-guru">
-            <button class="btn-icon" title="Refresh" onclick="renderMonitoring()">🔄</button>
-            <button class="btn-icon" title="Cetak" onclick="window.print()">🖨️</button>
-            <button class="btn-icon" title="Keluar" onclick="move('p-login')">🚪</button>
+            <button class="btn-icon" title="Cetak Laporan" onclick="window.print()">🖨️</button>
+            <button class="btn-icon" title="Logout" onclick="location.reload()" style="color: var(--danger);">⏻</button>
         </div>
-        <br><br><h3 style="margin: 0; color: var(--acc);">SMPN110 JAKARTA</h3>
+        <br><br><h3 style="margin: 0; color: var(--acc);">SMPN 110 JAKARTA</h3>
         <h3 style="margin: 0; color: var(--acc);">LAPORAN JURNAL 7 KEBIASAAN ANAK INDONESIA HEBAT</h3><br>
+        
+        <div class="filter-panel">
+            <select id="f-bulan" class="input-elegant" onchange="renderMonitoring()">
+                <option value="">-- SEMUA BULAN --</option>
+                <option value="Januari">Januari</option><option value="Februari">Februari</option>
+                <option value="Maret">Maret</option><option value="April">April</option>
+                <option value="Mei">Mei</option><option value="Juni">Juni</option>
+                <option value="Juli">Juli</option><option value="Agustus">Agustus</option>
+                <option value="September">September</option><option value="Oktober">Oktober</option>
+                <option value="November">November</option><option value="Desember">Desember</option>
+            </select>
+            <select id="f-siswa-list" class="input-elegant" onchange="renderMonitoring()">
+                <option value="">-- SEMUA SISWA --</option>
+            </select>
+        </div>
+
         <p id="infoLap" style="font-size: 0.8rem; opacity: 0.7;"></p>
         <div class="table-wrapper"><table id="tabelData"></table></div>
+        
         <div class="report-footer">
             <div style="text-align: center; width: 45%;"><p>Mengetahui,</p><p>Kepala SMPN 110 Jakarta</p><div style="height: 40px;"></div><p><b>____________________</b></p></div>
             <div style="text-align: center; width: 45%;"><p>Jakarta, <span id="tglCetak"></span></p><p>Wali Kelas</p><div style="height: 40px;"></div><p><b id="namaGuruTtd"></b></p></div>
@@ -147,14 +146,6 @@
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz_hGIxoqPPpWJGAK8PfCHZT6NZzWv08AlqWb6TQQse-jBBA15bTdmvN3KPgcMmohbE/exec'; 
     let DB_SISWA = [];
     let GURU_TERPILIH = "";
-
-    const SHOLAT_RULES = {
-        'Subuh':  { start: '04:00', end: '06:15', icon: '🌑' },
-        'Dzuhur': { start: '11:45', end: '14:45', icon: '☀️' },
-        'Ashar':  { start: '15:15', end: '17:45', icon: '🌤️' },
-        'Magrib': { start: '18:00', end: '19:10', icon: '🌅' },
-        'Isya':   { start: '19:15', end: '23:59', icon: '🌙' }
-    };
 
     const HABITS = [
         { i: "🌅", t: "Bangun", c: "#fbbf24", b: "rgba(251,191,36,0.2)" },
@@ -169,10 +160,7 @@
 
     function formatJam(str) {
         if (!str || str === "--:--") return "-";
-        if (str.includes("T")) {
-            let bagianJam = str.split("T")[1];
-            return bagianJam.substring(0, 5);
-        }
+        if (str.includes("T")) return str.split("T")[1].substring(0, 5);
         return str;
     }
 
@@ -186,10 +174,12 @@
         });
         const r = await fetch(SCRIPT_URL + "?action=getSiswa");
         DB_SISWA = await r.json();
+        
         [...new Set(DB_SISWA.map(x => x[0]))].sort().forEach(k => {
             let o = document.createElement('option'); o.value = k; o.textContent = "KELAS " + k;
             document.getElementById('i-kelas').appendChild(o);
         });
+        
         const sg = document.getElementById('selectGuru');
         [...new Set(DB_SISWA.map(x => x[2]))].sort().forEach(g => {
             let o = document.createElement('option'); o.value = g; o.textContent = g;
@@ -197,57 +187,18 @@
         });
     };
 
-    function klikHabit(i) {
-        const kls = document.getElementById('i-kelas').value;
-        const namaField = document.getElementById('i-nama');
-        const nama = namaField ? namaField.value : "";
-
-        if (!kls || !nama) {
-            return Swal.fire({
-                icon: 'warning',
-                title: 'Belum Lengkap!',
-                text: 'Silakan pilih KELAS dan NAMA Anda terlebih dahulu.',
-                confirmButtonColor: '#22d3ee'
-            });
-        }
-
-        if (i === 1) { document.getElementById('card-2').style.display = 'none'; setDone(i); } 
-        else if (i === 2) { 
-            document.getElementById('card-1').style.display = 'none';
-            let htmlSholat = `<div class="sholat-grid">`;
-            for(let s in SHOLAT_RULES) { htmlSholat += `<button class="btn-sholat" onclick="validasiSholat('${s}')">${SHOLAT_RULES[s].icon}<br>${s}</button>`; }
-            htmlSholat += `</div>`;
-            Swal.fire({ title: 'Waktu Sholat', html: htmlSholat, showConfirmButton: false, background: '#1e293b', color: '#fff' });
-        } else { setDone(i); }
-    }
-
-    window.validasiSholat = function(nama) {
-        const skrg = new Date();
-        const jam = skrg.getHours().toString().padStart(2, '0') + ":" + skrg.getMinutes().toString().padStart(2, '0');
-        const r = SHOLAT_RULES[nama];
-        if (jam < r.start) return Swal.fire('Belum Waktunya!', `Sholat ${nama} mulai jam ${r.start}`, 'warning');
-        if (jam > r.end) return Swal.fire('Waktu Terlewat!', `Batas ${nama} adalah jam ${r.end}`, 'error');
-        document.getElementById(`badge-2`).innerText = `${nama} (${jam})`;
-        document.getElementById(`card-2`).classList.add('done');
-        Swal.close();
-    };
-
-    function setDone(i) {
-        const t = new Date().toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'}).replace('.',':');
-        document.getElementById(`badge-${i}`).innerText = t;
-        document.getElementById(`card-${i}`).classList.add('done');
-    }
-
     function move(id) {
         document.querySelectorAll('.container').forEach(e => e.style.display = 'none');
-        document.body.style.justifyContent = "center";
         const t = document.getElementById(id);
         t.style.display = 'block';
         if(id === 'p-guru') {
             t.classList.add('guru-mode');
             document.body.style.justifyContent = "flex-start";
             document.querySelector('.nav-guru').style.display = 'flex';
-        } else { document.querySelector('.nav-guru').style.display = 'none'; }
+        } else { 
+            document.body.style.justifyContent = "center";
+            document.querySelector('.nav-guru').style.display = 'none'; 
+        }
     }
 
     function cekAkses() {
@@ -255,40 +206,54 @@
         const guru = document.getElementById('selectGuru').value;
         if (btoa(pass) === "Z3VydTExMA==" && guru !== "") {
             GURU_TERPILIH = guru;
+            updateDropdownSiswa();
             move('p-guru');
             renderMonitoring();
         } else { Swal.fire('Gagal', 'Password salah atau guru belum dipilih', 'error'); }
     }
 
+    function updateDropdownSiswa() {
+        const selectSiswa = document.getElementById('f-siswa-list');
+        selectSiswa.innerHTML = '<option value="">-- SEMUA SISWA --</option>';
+        const siswaDiampu = DB_SISWA.filter(x => x[2] === GURU_TERPILIH);
+        siswaDiampu.forEach(s => {
+            let o = document.createElement('option'); o.value = s[1]; o.textContent = s[1];
+            selectSiswa.appendChild(o);
+        });
+    }
+
+    // Fungsi Render Monitoring dengan Refresh Otomatis
     async function renderMonitoring() {
-        document.getElementById('tabelData').innerHTML = "<tr><td colspan='13'>Sinkronisasi...</td></tr>";
+        const tabel = document.getElementById('tabelData');
+        tabel.innerHTML = "<tr><td colspan='13'>Memuat data otomatis...</td></tr>";
         document.getElementById('namaGuruTtd').innerText = GURU_TERPILIH;
         document.getElementById('tglCetak').innerText = new Date().toLocaleDateString('id-ID', {day:'numeric', month:'long', year:'numeric'});
         document.getElementById('infoLap').innerText = "Wali Kelas: " + GURU_TERPILIH;
 
-        const res = await fetch(SCRIPT_URL);
-        const data = await res.json();
-        const filtered = data.filter(x => x[3] === GURU_TERPILIH);
-        
-        let h = `<thead><tr><th>NO</th><th>NAMA SISWA</th><th>KLS</th><th>TGL</th><th>BANGUN</th><th>IBADAH</th><th>SHOLAT</th><th>OLAH</th><th>MAKAN</th><th>BELAJAR</th><th>SOSIAL</th><th>TIDUR</th><th>REFLEKSI</th></tr></thead><tbody>`;
-        filtered.forEach((r, i) => {
-            h += `<tr>
-                <td>${i+1}</td>
-                <td>${r[2]}</td>
-                <td>${r[1]}</td>
-                <td>${r[0]}</td>
-                <td>${formatJam(r[4])}</td>
-                <td>${formatJam(r[5])}</td>
-                <td>${formatJam(r[6])}</td>
-                <td>${formatJam(r[7])}</td>
-                <td>${formatJam(r[8])}</td>
-                <td>${formatJam(r[9])}</td>
-                <td>${formatJam(r[10])}</td>
-                <td>${formatJam(r[11])}</td>
-                <td style="text-align:left; font-size:0.55rem">${r[12] || '-'}</td>
-            </tr>`;
-        });
-        document.getElementById('tabelData').innerHTML = h + `</tbody>`;
+        const fSiswa = document.getElementById('f-siswa-list').value;
+        const fBulan = document.getElementById('f-bulan').value;
+
+        try {
+            const res = await fetch(SCRIPT_URL);
+            let data = await res.json();
+            
+            let filtered = data.filter(x => x[3] === GURU_TERPILIH);
+            if(fSiswa) filtered = filtered.filter(x => x[2] === fSiswa);
+            if(fBulan) filtered = filtered.filter(x => x[0].includes(fBulan));
+            
+            let h = `<thead><tr><th>NO</th><th>NAMA SISWA</th><th>KLS</th><th>TGL</th><th>BANGUN</th><th>IBADAH</th><th>SHOLAT</th><th>OLAH</th><th>MAKAN</th><th>BELAJAR</th><th>SOSIAL</th><th>TIDUR</th><th>REFLEKSI</th></tr></thead><tbody>`;
+            
+            if(filtered.length === 0) {
+                h += `<tr><td colspan="13">Tidak ada data untuk filter ini.</td></tr>`;
+            } else {
+                filtered.forEach((r, i) => {
+                    h += `<tr><td>${i+1}</td><td>${r[2]}</td><td>${r[1]}</td><td>${r[0]}</td><td>${formatJam(r[4])}</td><td>${formatJam(r[5])}</td><td>${formatJam(r[6])}</td><td>${formatJam(r[7])}</td><td>${formatJam(r[8])}</td><td>${formatJam(r[9])}</td><td>${formatJam(r[10])}</td><td>${formatJam(r[11])}</td><td style="text-align:left; font-size:0.55rem">${r[12] || '-'}</td></tr>`;
+                });
+            }
+            tabel.innerHTML = h + `</tbody>`;
+        } catch (e) {
+            tabel.innerHTML = "<tr><td colspan='13'>Gagal memuat data otomatis. Periksa koneksi.</td></tr>";
+        }
     }
 
     async function loadSiswa() {
@@ -306,6 +271,19 @@
         document.getElementById('i-wali').value = d ? d[2] : "";
     }
 
+    function klikHabit(i) {
+        const kls = document.getElementById('i-kelas').value;
+        const nama = document.getElementById('i-nama')?.value;
+        if (!kls || !nama) return Swal.fire('Pilih Data!', 'Lengkapi Kelas & Nama Siswa', 'warning');
+        setDone(i);
+    }
+
+    function setDone(i) {
+        const t = new Date().toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'}).replace('.',':');
+        document.getElementById(`badge-${i}`).innerText = t;
+        document.getElementById(`card-${i}`).classList.add('done');
+    }
+
     async function kirimData() {
         if(!document.getElementById('i-nama').value) return Swal.fire('Pilih Nama!');
         Swal.fire({ title: 'Menyimpan...', didOpen: () => Swal.showLoading() });
@@ -316,7 +294,7 @@
             refleksi: document.getElementById('i-ref').value
         };
         await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
-        Swal.fire('Berhasil!', '', 'success').then(() => location.reload());
+        Swal.fire('Berhasil!', 'Jurnal disimpan.', 'success').then(() => location.reload());
     }
 </script>
 </body>
