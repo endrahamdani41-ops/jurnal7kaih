@@ -6,6 +6,7 @@
     <title>Jurnal 7 KAIH - SMPN 110 Jakarta</title>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root { 
             --bg: #0f172a; --card: #1e293b; --txt: #f8fafc; --acc: #22d3ee; 
@@ -43,7 +44,6 @@
             transition: 0.3s; outline: none; box-sizing: border-box;
             font-family: 'Nunito', sans-serif; cursor: pointer;
         }
-        .input-elegant option { background: #1e293b; color: white; }
 
         #habitList { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 15px 0; }
         .habit-item { display: flex; flex-direction: column; align-items: center; padding: 12px; border-radius: 18px; border: 2px solid var(--c); opacity: 0.3; cursor: pointer; transition: 0.3s; }
@@ -59,23 +59,45 @@
 
         .btn-main { width: 100%; padding: 15px; border-radius: 15px; border: none; font-weight: 800; cursor: pointer; font-size: 1rem; }
         
-        .nav-guru { position: fixed; top: 10px; right: 10px; display: none; gap: 10px; z-index: 1000; background: rgba(30, 41, 59, 0.8); padding: 8px; border-radius: 15px; backdrop-filter: blur(5px); border: 1px solid var(--border); }
-        .btn-icon { background: transparent; border: none; font-size: 1.6rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; padding: 5px; }
-        
-        .report-footer { margin-top: 30px; display: none; justify-content: space-around; font-size: 0.7rem; padding-bottom: 50px; }
+        .nav-guru { position: fixed; top: 10px; right: 10px; display: none; gap: 15px; z-index: 1000; background: rgba(30, 41, 59, 0.8); padding: 10px 15px; border-radius: 15px; backdrop-filter: blur(5px); border: 1px solid var(--border); align-items: center; }
+        .btn-icon { background: transparent; border: none; font-size: 1.5rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; color: var(--txt); }
+        .btn-logout { color: var(--danger) !important; font-size: 1.6rem; }
+
+        .report-footer { margin-top: 30px; display: none; justify-content: space-around; font-size: 0.8rem; padding-bottom: 50px; }
 
         .filter-panel { display: flex; gap: 10px; justify-content: center; margin-bottom: 20px; flex-wrap: wrap; }
         .filter-panel .input-elegant { width: auto; min-width: 180px; margin-bottom: 0; padding: 10px; font-size: 0.85rem; }
 
+        /* PENGATURAN CETAK PDF */
         @media print {
-            @page { size: landscape; margin: 0.5cm; }
-            .nav-guru, .swal2-container, #p-login, #p-akses-guru, #p-siswa, .filter-panel { display: none !important; }
+            @page { size: landscape; margin: 1cm; }
             body, html { background: white !important; color: black !important; margin: 0 !important; }
-            .container.guru-mode { width: 100% !important; padding: 0 !important; background: white !important; border: none !important;}
-            table { font-size: 7pt !important; width: 100% !important; border: 0.5pt solid black !important; }
-            table th, table td { border: 0.5pt solid black !important; padding: 2px !important; color: black !important; background: white !important; }
-            td:nth-child(2), th:nth-child(2) { position: static !important; border-right: 0.5pt solid black !important; }
-            .report-footer { display: flex !important; margin-top: 15px !important; page-break-inside: avoid !important; }
+            .nav-guru, .swal2-container, #p-login, #p-akses-guru, #p-siswa, .filter-panel { display: none !important; }
+            .container.guru-mode { width: 100% !important; padding: 0 !important; background: white !important; border: none !important; display: block !important; }
+            .table-wrapper { border: none !important; overflow: visible !important; }
+            table { font-size: 7.5pt !important; width: 100% !important; border: 0.5pt solid black !important; }
+            table th, table td { border: 0.5pt solid black !important; padding: 4px !important; color: black !important; background: white !important; }
+            
+            /* Mencegah teks turun di kolom Nama, Tanggal, dan semua kolom jam (termasuk Sholat) */
+            table td, table th { 
+                white-space: nowrap !important; 
+            }
+            
+            /* Khusus Refleksi boleh turun karena teksnya panjang */
+            table td:last-child {
+                white-space: normal !important;
+                min-width: 150px;
+            }
+
+            .report-footer { 
+                display: flex !important; 
+                margin-top: 30px !important; 
+                page-break-inside: avoid !important; 
+                break-inside: avoid !important;
+                width: 100% !important;
+            }
+
+            td:nth-child(2), th:nth-child(2) { position: static !important; text-align: left !important; }
         }
     </style>
 </head>
@@ -112,10 +134,11 @@
 
     <div id="p-guru" class="container">
         <div class="nav-guru">
-            <button class="btn-icon" title="Cetak Laporan" onclick="window.print()">🖨️</button>
-            <button class="btn-icon" title="Logout" onclick="location.reload()" style="color: var(--danger);">⏻</button>
+            <button class="btn-icon" title="Cetak Laporan" onclick="window.print()"><i class="fas fa-print"></i></button>
+            <button class="btn-icon btn-logout" title="Logout" onclick="location.reload()"><i class="fas fa-right-from-bracket"></i></button>
         </div>
-        <br><br><h3 style="margin: 0; color: var(--acc);">SMPN 110 JAKARTA</h3>
+        <br><br>
+        <h3 style="margin: 0; color: var(--acc);">SMPN 110 JAKARTA</h3>
         <h3 style="margin: 0; color: var(--acc);">LAPORAN JURNAL 7 KEBIASAAN ANAK INDONESIA HEBAT</h3><br>
         
         <div class="filter-panel">
@@ -137,8 +160,18 @@
         <div class="table-wrapper"><table id="tabelData"></table></div>
         
         <div class="report-footer">
-            <div style="text-align: center; width: 45%;"><p>Mengetahui,</p><p>Kepala SMPN 110 Jakarta</p><div style="height: 40px;"></div><p><b>____________________</b></p></div>
-            <div style="text-align: center; width: 45%;"><p>Jakarta, <span id="tglCetak"></span></p><p>Wali Kelas</p><div style="height: 40px;"></div><p><b id="namaGuruTtd"></b></p></div>
+            <div style="text-align: center; width: 40%;">
+                <p>Mengetahui,</p>
+                <p>Kepala SMPN 110 Jakarta</p>
+                <div style="height: 55px;"></div>
+                <p><b>Iis Ratna Sariningrum, S.Pd., M.M.</b></p>
+            </div>
+            <div style="text-align: center; width: 40%;">
+                <p>Jakarta, <span id="tglCetak"></span></p>
+                <p>Wali Kelas</p>
+                <div style="height: 55px;"></div>
+                <p><b id="namaGuruTtd"></b></p>
+            </div>
         </div>
     </div>
 
@@ -172,19 +205,21 @@
                 <div id="badge-${i}" class="time-badge">--:--</div>
             </div>`;
         });
-        const r = await fetch(SCRIPT_URL + "?action=getSiswa");
-        DB_SISWA = await r.json();
-        
-        [...new Set(DB_SISWA.map(x => x[0]))].sort().forEach(k => {
-            let o = document.createElement('option'); o.value = k; o.textContent = "KELAS " + k;
-            document.getElementById('i-kelas').appendChild(o);
-        });
-        
-        const sg = document.getElementById('selectGuru');
-        [...new Set(DB_SISWA.map(x => x[2]))].sort().forEach(g => {
-            let o = document.createElement('option'); o.value = g; o.textContent = g;
-            sg.appendChild(o);
-        });
+        try {
+            const r = await fetch(SCRIPT_URL + "?action=getSiswa");
+            DB_SISWA = await r.json();
+            
+            [...new Set(DB_SISWA.map(x => x[0]))].sort().forEach(k => {
+                let o = document.createElement('option'); o.value = k; o.textContent = "KELAS " + k;
+                document.getElementById('i-kelas').appendChild(o);
+            });
+            
+            const sg = document.getElementById('selectGuru');
+            [...new Set(DB_SISWA.map(x => x[2]))].sort().forEach(g => {
+                let o = document.createElement('option'); o.value = g; o.textContent = g;
+                sg.appendChild(o);
+            });
+        } catch(e) {}
     };
 
     function move(id) {
@@ -222,10 +257,9 @@
         });
     }
 
-    // Fungsi Render Monitoring dengan Refresh Otomatis
     async function renderMonitoring() {
         const tabel = document.getElementById('tabelData');
-        tabel.innerHTML = "<tr><td colspan='13'>Memuat data otomatis...</td></tr>";
+        tabel.innerHTML = "<tr><td colspan='13'>Memuat data...</td></tr>";
         document.getElementById('namaGuruTtd').innerText = GURU_TERPILIH;
         document.getElementById('tglCetak').innerText = new Date().toLocaleDateString('id-ID', {day:'numeric', month:'long', year:'numeric'});
         document.getElementById('infoLap').innerText = "Wali Kelas: " + GURU_TERPILIH;
@@ -244,15 +278,15 @@
             let h = `<thead><tr><th>NO</th><th>NAMA SISWA</th><th>KLS</th><th>TGL</th><th>BANGUN</th><th>IBADAH</th><th>SHOLAT</th><th>OLAH</th><th>MAKAN</th><th>BELAJAR</th><th>SOSIAL</th><th>TIDUR</th><th>REFLEKSI</th></tr></thead><tbody>`;
             
             if(filtered.length === 0) {
-                h += `<tr><td colspan="13">Tidak ada data untuk filter ini.</td></tr>`;
+                h += `<tr><td colspan="13">Data tidak ditemukan.</td></tr>`;
             } else {
                 filtered.forEach((r, i) => {
-                    h += `<tr><td>${i+1}</td><td>${r[2]}</td><td>${r[1]}</td><td>${r[0]}</td><td>${formatJam(r[4])}</td><td>${formatJam(r[5])}</td><td>${formatJam(r[6])}</td><td>${formatJam(r[7])}</td><td>${formatJam(r[8])}</td><td>${formatJam(r[9])}</td><td>${formatJam(r[10])}</td><td>${formatJam(r[11])}</td><td style="text-align:left; font-size:0.55rem">${r[12] || '-'}</td></tr>`;
+                    h += `<tr><td>${i+1}</td><td>${r[2]}</td><td>${r[1]}</td><td>${r[0]}</td><td>${formatJam(r[4])}</td><td>${formatJam(r[5])}</td><td>${formatJam(r[6])}</td><td>${formatJam(r[7])}</td><td>${formatJam(r[8])}</td><td>${formatJam(r[9])}</td><td>${formatJam(r[10])}</td><td>${formatJam(r[11])}</td><td style="text-align:left;">${r[12] || '-'}</td></tr>`;
                 });
             }
             tabel.innerHTML = h + `</tbody>`;
         } catch (e) {
-            tabel.innerHTML = "<tr><td colspan='13'>Gagal memuat data otomatis. Periksa koneksi.</td></tr>";
+            tabel.innerHTML = "<tr><td colspan='13'>Gagal memuat data.</td></tr>";
         }
     }
 
@@ -272,9 +306,7 @@
     }
 
     function klikHabit(i) {
-        const kls = document.getElementById('i-kelas').value;
-        const nama = document.getElementById('i-nama')?.value;
-        if (!kls || !nama) return Swal.fire('Pilih Data!', 'Lengkapi Kelas & Nama Siswa', 'warning');
+        if (!document.getElementById('i-nama')?.value) return Swal.fire('Pilih Nama!', '', 'warning');
         setDone(i);
     }
 
@@ -294,7 +326,7 @@
             refleksi: document.getElementById('i-ref').value
         };
         await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
-        Swal.fire('Berhasil!', 'Jurnal disimpan.', 'success').then(() => location.reload());
+        Swal.fire('Berhasil!', 'Data tersimpan.', 'success').then(() => location.reload());
     }
 </script>
 </body>
